@@ -47,6 +47,7 @@
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; font-size: 12px; color: #a3c2b5; margin-bottom: 4px; }
     .form-group input, .form-group textarea { width: 100%; background: #081d15; border: 1px solid #235843; border-radius: 8px; padding: 10px 12px; color: #fff; font-size: 14px; outline: none; }
+    .file-input { width: 100%; padding: 8px; background: #081d15; border: 1px solid #235843; border-radius: 8px; color: #a3c2b5; font-size: 13px; cursor: pointer; }
     
     .pay-mode-btns { display: flex; gap: 8px; }
     .pay-mode-btn { flex: 1; padding: 8px; background: #081d15; border: 1px solid #235843; border-radius: 8px; color: #a3c2b5; font-size: 12px; cursor: pointer; text-align: center; }
@@ -56,6 +57,7 @@
     .entry-info h4 { font-size: 14px; color: #fff; margin-bottom: 2px; }
     .entry-info p { font-size: 11px; color: #a3c2b5; }
     .entry-badge { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-top: 4px; background: #e5c158; color: #0b251c; }
+    .receipt-link { display: inline-block; margin-top: 6px; color: #e5c158; font-size: 12px; text-decoration: underline; font-weight: 600; }
     .entry-amount { text-align: right; }
     .entry-amount .val { font-size: 15px; font-weight: 700; }
     .entry-amount .val.plus { color: #52c41a; }
@@ -144,8 +146,13 @@
           <textarea id="noteText" rows="2" placeholder="Additional details..."></textarea>
         </div>
 
+        <div class="form-group">
+          <label>Attach Screenshot / Receipt (Optional)</label>
+          <input type="file" id="receiptImg" class="file-input" accept="image/*">
+        </div>
+
         <button type="submit" id="saveBtn" class="btn-gold">Save Entry to Cloud</button>
-        <div id="statusMsg" class="status-msg">Saving to Cloud Database...</div>
+        <div id="statusMsg" class="status-msg">Saving entry & uploading image to Drive...</div>
       </form>
     </div>
 
@@ -160,7 +167,6 @@
 </div>
 
 <script>
-  // YOUR GOOGLE APPS SCRIPT URL CONNECTED:
   const CLOUD_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWlGiiPu7XvBKO9xWu_5fWVzBSBhRJEtBllA9_oqVHa1b9QUJzRfu-llg4-bS8D_KW/exec";
 
   let currentType = 'collection';
@@ -215,7 +221,8 @@
     container.innerHTML = '<div style="text-align:center; color:#e5c158; padding:12px;">Syncing with Cloud...</div>';
 
     try {
-      const response = await fetch(CLOUD_SCRIPT_URL);
+      // Added Cache-Buster (?t=...) to always fetch real-time fresh data
+      const response = await fetch(CLOUD_SCRIPT_URL + "?t=" + Date.now());
       const data = await response.json();
       renderEntries(data.reverse());
     } catch(err) {
@@ -231,6 +238,22 @@
     saveBtn.disabled = true;
     statusMsg.style.display = 'block';
 
+    const fileInput = document.getElementById('receiptImg');
+    let imageBase64 = null;
+    let fileName = null;
+    let mimeType = null;
+
+    if (fileInput.files && fileInput.files[0]) {
+      const file = fileInput.files[0];
+      fileName = file.name;
+      mimeType = file.type;
+      imageBase64 = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(file);
+      });
+    }
+
     const payload = {
       action: "add",
       id: Date.now(),
@@ -240,7 +263,10 @@
       date: document.getElementById('entryDate').value,
       mode: currentPayMode,
       handledBy: document.getElementById('handledBy').value,
-      note: document.getElementById('noteText').value
+      note: document.getElementById('noteText').value,
+      image: imageBase64,
+      filename: fileName,
+      mimeType: mimeType
     };
 
     try {
@@ -253,7 +279,9 @@
       document.getElementById('entryDate').valueAsDate = new Date();
       statusMsg.style.display = 'none';
       saveBtn.disabled = false;
-      fetchCloudEntries();
+      
+      // Wait 1.5 seconds then refresh list to allow sheet processing
+      setTimeout(fetchCloudEntries, 1500);
     } catch(err) {
       alert("Error saving data. Please try again.");
       statusMsg.style.display = 'none';
@@ -276,6 +304,11 @@
         if (item.type === 'collection') totalCol += amt;
         else totalExp += amt;
 
+        let imageHTML = '';
+        if (item.image && item.image.startsWith('http')) {
+          imageHTML = `<br><a href="${item.image}" target="_blank" class="receipt-link">📷 View Screenshot</a>`;
+        }
+
         const card = document.createElement('div');
         card.className = 'entry-card';
         card.innerHTML = `
@@ -283,6 +316,7 @@
             <h4>${item.name}</h4>
             <p>${item.date} • ${item.mode} ${item.handledBy ? '• By: ' + item.handledBy : ''}</p>
             <span class="entry-badge">${String(item.type).toUpperCase()}</span>
+            ${imageHTML}
           </div>
           <div class="entry-amount">
             <div class="val ${item.type === 'collection' ? 'plus' : 'minus'}">
