@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mekhlooq Se Muhabbat - Drive Ledger</title>
+  
+  <!-- iOS Web App Optimization Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mekhlooq Drive">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Noto+Nastaliq+Urdu:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0B2E29;
+      --bg-deep:#082420;
+      --glass:rgba(255,255,255,.045);
+      --border:rgba(212,175,55,.20);
+      --border-hi:rgba(212,175,55,.38);
+      --text:#F5EFDD;
+      --text-soft:rgba(245,239,221,.66);
+      --text-faint:rgba(245,239,221,.40);
+      --gold:#D4AF37;
+      --gold-soft:#E8CD6C;
+      --emerald:#3BBFA0;
+      --rose:#E4677A;
+      --rose-bg:rgba(228,103,122,.12);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    body, html { margin:0; padding:0; background:var(--bg); }
+    .mq-root{
+      position:relative;
+      background:radial-gradient(ellipse 120% 60% at 50% -10%, rgba(59,191,160,.14), transparent 60%), var(--bg);
+      color:var(--text);
+      font-family:'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding:calc(22px + env(safe-area-inset-top)) 16px calc(60px + env(safe-area-inset-bottom));
+      min-height:100vh;
+      width:100vw;
+      overflow-x:hidden;
+      line-height:1.5;
+      font-size:15px;
+    }
+    .mq-root h1,.mq-root h2,.mq-root h3{font-family:'Fraunces',Georgia,serif;font-weight:600;margin:0;}
+
+    .mq-urdu-text {
+      font-family: 'Noto Nastaliq Urdu', 'Noto Serif Arabic', 'Urdu Typesetting', serif !important;
+      direction: rtl;
+      line-height: 2.2 !important;
+    }
+
+    .mq-blob{position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0;}
+    .mq-blob.b1{width:320px;height:320px;top:-110px;left:-90px;background:radial-gradient(circle,rgba(212,175,55,.20),transparent 70%);}
+    .mq-blob.b2{width:360px;height:360px;bottom:60px;right:-140px;background:radial-gradient(circle,rgba(59,191,160,.16),transparent 70%);}
+
+    .mq-quote-section{text-align:center;margin-bottom:20px;position:relative;z-index:1;}
+    .mq-quote-section .q{
+      font-size:24px;color:var(--gold-soft);
+      text-shadow:0 0 24px rgba(212,175,55,.25);
+    }
+
+    .mq-wrap{max-width:520px;margin:0 auto;position:relative;z-index:1;}
+
+    .mq-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+    .mq-mark{
+      width:44px;height:44px;border-radius:12px;flex-shrink:0;
+      background:linear-gradient(155deg, rgba(212,175,55,.28), rgba(59,191,160,.14));
+      border:1px solid var(--border-hi);
+      display:flex;align-items:center;justify-content:center;
+    }
+    .mq-header h1{font-size:16.5px;letter-spacing:.3px;color:var(--gold-soft);line-height:1.25;}
+    .mq-header p{margin:4px 0 0;color:var(--text-soft);font-size:11.5px;}
+
+    .mq-kpis{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;}
+    .mq-tile{
+      background:var(--glass);border:1px solid var(--border);border-radius:13px;padding:12px 10px;
+      position:relative;overflow:hidden;text-align:center;
+    }
+    .mq-tile .lbl{font-size:10px;color:var(--text-soft);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;}
+    .mq-tile .val{font-size:13.5px;font-weight:700;}
+    .mq-tile.emerald .val{color:var(--emerald);}
+    .mq-tile.rose .val{color:var(--rose);}
+    .mq-tile.gold .val{color:var(--gold-soft);}
+
+    .mq-hero{
+      position:relative;
+      background:linear-gradient(165deg, rgba(212,175,55,.10), rgba(59,191,160,.05));
+      border:1px solid var(--border-hi);border-radius:18px;
+      padding:16px;margin-bottom:14px;
+    }
+    .mq-hero select{
+      width:100%;background:rgba(255,255,255,.06);border:1px solid var(--border-hi);color:var(--text);
+      padding:10px 12px;border-radius:9px;font-size:14px;outline:none;
+    }
+
+    .mq-type-toggle{display:flex;gap:8px;margin-bottom:14px;}
+    .mq-type-btn{
+      flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);
+      background:rgba(255,255,255,.03);color:var(--text-soft);font-size:13.5px;
+      font-weight:600;cursor:pointer;min-height:46px;text-align:center;
+    }
+    .mq-type-btn.active.income{background:rgba(59,191,160,.18);border-color:var(--emerald);color:var(--emerald);}
+    .mq-type-btn.active.expense{background:var(--rose-bg);border-color:var(--rose);color:var(--rose);}
+
+    .mq-panel{
+      position:relative;background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+      border:1px solid var(--border);border-radius:16px;padding:18px 16px;margin-bottom:14px;
+    }
+    .mq-panel h2{font-size:15px;color:var(--text);margin-bottom:14px;}
+    .mq-field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+    .mq-field label{font-size:12px;color:var(--text-soft);}
+    .mq-field input, .mq-field select{
+      width:100%;background:rgba(255,255,255,.045);border:1px solid var(--border);color:var(--text);
+      padding:12px 14px;border-radius:10px;font-size:15px;min-height:46px;
+    }
+    .mq-field input:focus, .mq-field select:focus{outline:none;border-color:var(--gold);}
+
+    .mq-method{display:flex;gap:8px;margin-bottom:12px;}
+    .mq-method button{
+      flex:1;padding:11px 8px;border-radius:10px;border:1px solid var(--border);
+      background:rgba(255,255,255,.03);color:var(--text-soft);font-size:12.5px;cursor:pointer;min-height:42px;
+    }
+    .mq-method button.active.online{background:rgba(59,191,160,.16);border-color:var(--emerald);color:var(--emerald);}
+    .mq-method button.active.physical{background:rgba(212,175,55,.16);border-color:var(--gold);color:var(--gold-soft);}
+
+    .mq-upload{
+      border:1px dashed var(--border-hi);border-radius:11px;padding:14px;text-align:center;
+      color:var(--text-soft);font-size:12.5px;cursor:pointer;background:rgba(255,255,255,.02);
+    }
+    .mq-thumb-wrap{width:90px;height:90px;border-radius:10px;overflow:hidden;margin-top:10px;border:1px solid var(--border-hi);}
+    .mq-thumb-wrap img{width:100%;height:100%;object-fit:cover;}
+
+    .mq-submit{
+      width:100%;margin-top:6px;background:linear-gradient(135deg,var(--gold),var(--gold-soft));color:#26210A;border:none;
+      padding:14px;border-radius:11px;font-size:15px;cursor:pointer;font-weight:600;min-height:48px;
+    }
+    .mq-submit.expense-btn{ background:linear-gradient(135deg,#E4677A,#C74B5E);color:#FFF; }
+
+    .mq-msg{font-size:13px;margin-top:10px;text-align:center;}
+    .mq-msg.err{color:var(--rose);}
+    .mq-msg.ok{color:var(--emerald);}
+
+    .mq-pills{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;}
+    .mq-pill{
+      background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text-soft);
+      padding:8px 12px;border-radius:20px;font-size:12px;cursor:pointer;white-space:nowrap;
+    }
+    .mq-pill.active{background:rgba(212,175,55,.16);border-color:var(--gold);color:var(--gold-soft);font-weight:600;}
+
+    .mq-entry{
+      background:rgba(255,255,255,.03);border:1px solid var(--border);
+      border-left:4px solid var(--glow, var(--border));
+      border-radius:12px;padding:12px 14px;margin-bottom:9px;font-size:13.5px;
+    }
+    .mq-entry-top{display:flex;gap:10px;align-items:flex-start;}
+    .mq-entry-main{flex:1;min-width:0;}
+    .mq-entry-name{font-weight:600;color:var(--text);}
+    .mq-entry-note{color:var(--text-soft);margin-top:3px;font-size:12px;}
+    .mq-entry-date{color:var(--text-faint);font-size:11px;margin-top:4px;}
+    .mq-entry-amt{font-family:'Fraunces',serif;font-weight:600;white-space:nowrap;font-size:15px;}
+    .mq-entry-amt.income{color:var(--emerald);}
+    .mq-entry-amt.expense{color:var(--rose);}
+    .mq-tag{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;margin-left:6px;text-transform:uppercase;}
+    .mq-tag.friday{background:rgba(212,175,55,.2);color:var(--gold-soft);border:1px solid var(--border-hi);}
+
+    .mq-lock-wrap{display:flex;align-items:center;justify-content:center;min-height:82vh;position:relative;z-index:1;}
+    .mq-lock-card{
+      max-width:340px;width:100%;text-align:center;
+      background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+      border:1px solid var(--border-hi);border-radius:20px;padding:32px 24px;
+    }
+    .mq-lock-card h1{font-size:16px;letter-spacing:.3px;margin-bottom:6px;color:var(--gold-soft);}
+    .mq-unlock-btn{
+      width:100%;background:linear-gradient(135deg,var(--gold),var(--gold-soft));color:#26210A;border:none;
+      padding:13px;border-radius:11px;font-size:14.5px;font-weight:600;cursor:pointer;min-height:48px;
+    }
+    .mq-pass-wrap{position:relative;margin:16px 0;}
+    .mq-eye{
+      position:absolute;right:4px;top:50%;transform:translateY(-50%);
+      background:none;border:none;padding:10px;cursor:pointer;color:var(--text-soft);
+    }
+  </style>
+</head>
+<body>
+
+<div class="mq-root" id="dlRoot"></div>
+
+<script>
+(function(){
+  const root = document.getElementById('dlRoot');
+  const ORG_NAME = "MEKHLOOQ SE MUHABBAT";
+  const TAGLINE = "Friday Drive Collections & Expense Ledger";
+  const QUOTE_UR = "اس راہ کے مسافر ہیں، اسی راہ میں ملیں گے";
+  const PASSCODE = "langarkahissa"; 
+
+  let unlocked = false;
+  let lockMsg = '';
+  let passVisible = false;
+  let records = [];
+  let selectedMonth = safeMonthKey(new Date());
+  
+  let recordType = 'income'; 
+  let method = 'online';
+  let screenshotDataUrl = null;
+  let submitting = false;
+  let formMsg = null;
+  let listFilter = 'all';
+
+  function parseSafeDate(dateStr) {
+    if (!dateStr) return new Date();
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+    }
+    return new Date(dateStr);
+  }
+
+  function isFridayDate(dateStr) {
+    return parseSafeDate(dateStr).getDay() === 5;
+  }
+
+  function safeMonthKey(d){ 
+    const dateObj = (typeof d === 'string') ? parseSafeDate(d) : d;
+    return dateObj.getFullYear() + '-' + String(dateObj.getMonth()+1).padStart(2,'0'); 
+  }
+
+  function monthLabel(key){
+    const parts = key.split('-');
+    return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, 1).toLocaleString('en-US',{month:'long',year:'numeric'});
+  }
+
+  function fmtAmt(n){ return 'Rs. ' + Number(n).toLocaleString('en-PK'); }
+  function fmtDate(iso){ 
+    const d = parseSafeDate(iso);
+    return `${d.toLocaleDateString('en-US',{weekday:'short'})}, ${d.toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'})}`; 
+  }
+  function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+
+  function loadRecords(){
+    try{
+      let items = [];
+      for(let i=0; i<localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if(k && (k.startsWith('records:') || k.startsWith('entries:'))) {
+          const parsed = JSON.parse(localStorage.getItem(k));
+          if(!parsed.type) parsed.type = 'income';
+          items.push(parsed);
+        }
+      }
+      const uniqueMap = new Map();
+      items.forEach(item => uniqueMap.set(item.id, item));
+      items = Array.from(uniqueMap.values());
+      items.sort((a,b)=> (b.date+b.createdAt) < (a.date+a.createdAt) ? -1 : 1);
+      records = items;
+    } catch(e){ records = []; }
+    render();
+  }
+
+  function compressImage(file){
+    return new Promise((resolve,reject)=>{
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 800; let w = img.width, h = img.height;
+          if(w > maxDim || h > maxDim){
+            if(w > h){ h = Math.round(h*maxDim/w); w = maxDim; } else { w = Math.round(w*maxDim/h); h = maxDim; }
+          }
+          const canvas = document.createElement('canvas'); canvas.width=w; canvas.height=h;
+          canvas.getContext('2d').drawImage(img,0,0,w,h);
+          resolve(canvas.toDataURL('image/jpeg',0.65));
+        };
+        img.onerror = reject; img.src = reader.result;
+      };
+      reader.onerror = reject; reader.readAsDataURL(file);
+    });
+  }
+
+  function submitRecord(e){
+    e.preventDefault();
+    if(submitting) return;
+    const form = e.target;
+    
+    const title = form.dl_title.value.trim();
+    const amount = parseFloat(form.dl_amount.value);
+    const date = form.dl_date.value;
+    const category = form.dl_category ? form.dl_category.value : 'General';
+    const handler = form.dl_handler ? form.dl_handler.value.trim() : '';
+    const extraNote = form.dl_note ? form.dl_note.value.trim() : '';
+
+    if(!title || !amount || amount <= 0 || !date){
+      formMsg = {type:'err', text:'Please enter a valid title, amount, and date.'}; render(); return;
+    }
+
+    const record = {
+      id: 'r_' + Date.now() + Math.random().toString(36).slice(2,6),
+      type: recordType,
+      title, 
+      amount, 
+      date, 
+      isFriday: isFridayDate(date),
+      category: recordType === 'expense' ? category : null,
+      method: recordType === 'income' ? method : null,
+      handler: handler || null,
+      note: extraNote || null,
+      screenshot: screenshotDataUrl || null,
+      monthKey: safeMonthKey(date),
+      createdAt: new Date().toISOString()
+    };
+
+    submitting = true; formMsg = null; render();
+    localStorage.setItem('records:' + record.id, JSON.stringify(record));
+    records.unshift(record);
+    selectedMonth = record.monthKey;
+    screenshotDataUrl = null;
+    formMsg = {type:'ok', text: recordType === 'income' ? 'Donation recorded successfully!' : 'Expense logged successfully!'};
+    submitting = false; render();
+  }
+
+  function computeStats(list){
+    const totalCollected = list.filter(r => r.type === 'income').reduce((s,r) => s + r.amount, 0);
+    const totalSpent = list.filter(r => r.type === 'expense').reduce((s,r) => s + r.amount, 0);
+    return { totalCollected, totalSpent, netBalance: totalCollected - totalSpent };
+  }
+
+  function renderLock(){
+    root.innerHTML = `
+      <div class="mq-lock-wrap">
+        <div class="mq-lock-card">
+          <h1>${ORG_NAME}</h1>
+          <p style="color:var(--text-soft);font-size:12px;">Enter passcode to access drive ledger</p>
+          <div class="mq-field mq-pass-wrap">
+            <input type="${passVisible?'text':'password'}" id="dlPass" placeholder="Passcode" style="text-align:center;" />
+            <button type="button" class="mq-eye" id="dlEyeToggle">${passVisible?'🙈':'👁️'}</button>
+          </div>
+          <button id="dlUnlockBtn" class="mq-unlock-btn">Unlock Ledger</button>
+          ${lockMsg ? `<div class="mq-msg err">${lockMsg}</div>` : ''}
+        </div>
+      </div>`;
+    
+    document.getElementById('dlUnlockBtn').onclick = () => {
+      if(document.getElementById('dlPass').value === PASSCODE){ unlocked = true; render(); loadRecords(); }
+      else { lockMsg = 'Incorrect passcode'; renderLock(); }
+    };
+    document.getElementById('dlEyeToggle').onclick = () => { passVisible = !passVisible; renderLock(); };
+  }
+
+  function render(){
+    if(!unlocked){ renderLock(); return; }
+
+    const months = Array.from(new Set(records.map(r=>r.monthKey)));
+    if(!months.includes(selectedMonth)) months.push(selectedMonth);
+    months.sort().reverse();
+
+    const monthRecords = records.filter(r=>r.monthKey===selectedMonth);
+    const stats = computeStats(monthRecords);
+    const todayStr = new Date().toISOString().slice(0,10);
+
+    let displayRecords = monthRecords;
+    if(listFilter === 'income') displayRecords = displayRecords.filter(r => r.type === 'income');
+    if(listFilter === 'expense') displayRecords = displayRecords.filter(r => r.type === 'expense');
+    if(listFilter === 'friday') displayRecords = displayRecords.filter(r => r.isFriday);
+
+    root.innerHTML = `
+      <div class="mq-blob b1"></div><div class="mq-blob b2"></div>
+      <div class="mq-wrap">
+        <header class="mq-header">
+          <div class="mq-mark">🤲</div>
+          <div><h1>${ORG_NAME}</h1><p>${TAGLINE}</p></div>
+        </header>
+
+        <div class="mq-quote-section">
+          <div class="q mq-urdu-text">${QUOTE_UR}</div>
+        </div>
+
+        <section class="mq-hero">
+          <select id="dlMonthSel">${months.map(m => `<option value="${m}" ${m===selectedMonth?'selected':''}>📅 Period: ${monthLabel(m)}</option>`).join('')}</select>
+        </section>
+
+        <div class="mq-kpis">
+          <div class="mq-tile emerald">
+            <div class="lbl">Collected</div>
+            <div class="val">${fmtAmt(stats.totalCollected)}</div>
+          </div>
+          <div class="mq-tile rose">
+            <div class="lbl">Spent</div>
+            <div class="val">${fmtAmt(stats.totalSpent)}</div>
+          </div>
+          <div class="mq-tile gold">
+            <div class="lbl">Net Balance</div>
+            <div class="val">${fmtAmt(stats.netBalance)}</div>
+          </div>
+        </div>
+
+        <section class="mq-panel">
+          <h2>Log New Entry</h2>
+          
+          <div class="mq-type-toggle">
+            <button type="button" id="tIncome" class="mq-type-btn ${recordType==='income'?'active income':''}">+ Collection</button>
+            <button type="button" id="tExpense" class="mq-type-btn ${recordType==='expense'?'active expense':''}">- Expense</button>
+          </div>
+
+          <form id="dlForm">
+            <div class="mq-field">
+              <label>${recordType==='income' ? 'Donor / Supporter Name *' : 'Expense Item *'}</label>
+              <input type="text" name="dl_title" placeholder="${recordType==='income'?'e.g., Brother Ali':'e.g., Rice, Meat, Deg charges'}" required />
+            </div>
+
+            <div class="mq-field">
+              <label>Amount (PKR) *</label>
+              <input type="number" name="dl_amount" placeholder="0" required />
+            </div>
+
+            <div class="mq-field">
+              <label>Date *</label>
+              <input type="date" name="dl_date" value="${todayStr}" required />
+            </div>
+
+            ${recordType === 'expense' ? `
+              <div class="mq-field">
+                <label>Category</label>
+                <select name="dl_category">
+                  <option value="Food & Ingredients">Food & Ingredients (Rice, Meat, Oil)</option>
+                  <option value="Deg & Cook Charges">Deg / Catering Service</option>
+                  <option value="Packaging & Disposable">Packaging & Disposable Plates</option>
+                  <option value="Transport & Fuel">Transport & Delivery</option>
+                  <option value="Misc / Other">Misc Drive Expense</option>
+                </select>
+              </div>
+            ` : `
+              <div class="mq-method">
+                <button type="button" id="mOnline" class="${method==='online'?'active online':''}">Online Transfer</button>
+                <button type="button" id="mPhysical" class="${method==='physical'?'active physical':''}">Cash In Hand</button>
+              </div>
+            `}
+
+            <div class="mq-field">
+              <label>Handled / Received By</label>
+              <input type="text" name="dl_handler" placeholder="e.g., Volunteer name" />
+            </div>
+
+            <div class="mq-field">
+              <label>Receipt / Proof Image (Optional)</label>
+              <div class="mq-upload" id="dlUpArea">Tap to attach bill or transfer receipt</div>
+              <input type="file" id="dlFileInput" accept="image/*" style="display:none;" />
+              ${screenshotDataUrl ? `<div class="mq-thumb-wrap"><img src="${screenshotDataUrl}"/></div>` : ''}
+            </div>
+
+            <div class="mq-field">
+              <label>Note</label>
+              <input type="text" name="dl_note" placeholder="Additional details..." />
+            </div>
+
+            <button type="submit" class="mq-submit ${recordType==='expense'?'expense-btn':''}" ${submitting?'disabled':''}>
+              ${submitting ? 'Saving...' : (recordType === 'income' ? 'Save Collection' : 'Log Expense')}
+            </button>
+            ${formMsg ? `<div class="mq-msg ${formMsg.type}">${formMsg.text}</div>` : ''}
+          </form>
+        </section>
+
+        <section class="mq-panel">
+          <h2>Drive Stream (${displayRecords.length})</h2>
+          
+          <div class="mq-pills">
+            <button type="button" class="mq-pill ${listFilter==='all'?'active':''}" id="fAll">All</button>
+            <button type="button" class="mq-pill ${listFilter==='friday'?'active':''}" id="fFriday">🕌 Friday Drives</button>
+            <button type="button" class="mq-pill ${listFilter==='income'?'active':''}" id="fIncome">Collections (+)</button>
+            <button type="button" class="mq-pill ${listFilter==='expense'?'active':''}" id="fExpense">Expenses (-)</button>
+          </div>
+
+          <div id="dlEntriesList">
+            ${displayRecords.length === 0 ? '<div style="text-align:center;color:var(--text-faint);padding:20px 0;">No records found.</div>' :
+              displayRecords.map(r => `
+                <div class="mq-entry" style="--glow:${r.type==='income'?'var(--emerald)':'var(--rose)'}">
+                  <div class="mq-entry-top">
+                    <div class="mq-entry-main">
+                      <div class="mq-entry-name">
+                        ${escapeHtml(r.title)}
+                        ${r.isFriday ? '<span class="mq-tag friday">Friday Drive</span>' : ''}
+                      </div>
+                      <div class="mq-entry-date">
+                        ${fmtDate(r.date)} ${r.category ? '• '+r.category : ''} ${r.method ? '• '+r.method : ''}
+                      </div>
+                      ${r.handler ? `<div class="mq-entry-note">Handled by: ${escapeHtml(r.handler)}</div>` : ''}
+                      ${r.note ? `<div class="mq-entry-note">${escapeHtml(r.note)}</div>` : ''}
+                    </div>
+                    <div class="mq-entry-amt ${r.type}">
+                      ${r.type==='income' ? '+' : '-'}${fmtAmt(r.amount)}
+                    </div>
+                  </div>
+                </div>
+              `).join('')
+            }
+          </div>
+        </section>
+      </div>`;
+
+    document.getElementById('dlMonthSel').onchange = (e) => { selectedMonth = e.target.value; render(); };
+    document.getElementById('dlForm').onsubmit = submitRecord;
+    
+    document.getElementById('tIncome').onclick = () => { recordType = 'income'; render(); };
+    document.getElementById('tExpense').onclick = () => { recordType = 'expense'; render(); };
+
+    const mOnline = document.getElementById('mOnline');
+    const mPhysical = document.getElementById('mPhysical');
+    if(mOnline) mOnline.onclick = () => { method = 'online'; render(); };
+    if(mPhysical) mPhysical.onclick = () => { method = 'physical'; render(); };
+
+    document.getElementById('fAll').onclick = () => { listFilter = 'all'; render(); };
+    document.getElementById('fFriday').onclick = () => { listFilter = 'friday'; render(); };
+    document.getElementById('fIncome').onclick = () => { listFilter = 'income'; render(); };
+    document.getElementById('fExpense').onclick = () => { listFilter = 'expense'; render(); };
+
+    const upArea = document.getElementById('dlUpArea');
+    const fileInput = document.getElementById('dlFileInput');
+    if(upArea && fileInput) {
+      upArea.onclick = () => fileInput.click();
+      fileInput.onchange = (e) => {
+        if(e.target.files[0]) compressImage(e.target.files[0]).then(url => { screenshotDataUrl = url; render(); });
+      };
+    }
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
