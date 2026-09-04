@@ -4,528 +4,393 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Mekhlooq Se Muhabbat - Drive Ledger</title>
-  
-  <!-- iOS Web App Optimization Tags -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Mekhlooq Drive">
-  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Noto+Nastaliq+Urdu:wght@500;700&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --bg:#0B2E29;
-      --bg-deep:#082420;
-      --glass:rgba(255,255,255,.045);
-      --border:rgba(212,175,55,.20);
-      --border-hi:rgba(212,175,55,.38);
-      --text:#F5EFDD;
-      --text-soft:rgba(245,239,221,.66);
-      --text-faint:rgba(245,239,221,.40);
-      --gold:#D4AF37;
-      --gold-soft:#E8CD6C;
-      --emerald:#3BBFA0;
-      --rose:#E4677A;
-      --rose-bg:rgba(228,103,122,.12);
-    }
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-    body, html { margin:0; padding:0; background:var(--bg); }
-    .mq-root{
-      position:relative;
-      background:radial-gradient(ellipse 120% 60% at 50% -10%, rgba(59,191,160,.14), transparent 60%), var(--bg);
-      color:var(--text);
-      font-family:'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      padding:calc(22px + env(safe-area-inset-top)) 16px calc(60px + env(safe-area-inset-bottom));
-      min-height:100vh;
-      width:100vw;
-      overflow-x:hidden;
-      line-height:1.5;
-      font-size:15px;
-    }
-    .mq-root h1,.mq-root h2,.mq-root h3{font-family:'Fraunces',Georgia,serif;font-weight:600;margin:0;}
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: #0b251c; color: #eaf2ef; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
+    .app-container { width: 100%; max-width: 480px; margin: 0 auto; }
+    
+    /* Lock Screen */
+    .lock-screen { background: #113326; border: 1px solid #1e4d3a; border-radius: 16px; padding: 32px 20px; text-align: center; margin-top: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    .lock-screen h1 { color: #e5c158; font-size: 20px; letter-spacing: 1px; margin-bottom: 6px; text-transform: uppercase; }
+    .lock-screen p { color: #a3c2b5; font-size: 13px; margin-bottom: 24px; }
+    .input-wrapper { position: relative; margin-bottom: 16px; }
+    .input-wrapper input { width: 100%; padding: 14px 42px 14px 16px; background: #081d15; border: 1px solid #235843; border-radius: 10px; color: #fff; font-size: 15px; outline: none; }
+    .input-wrapper input:focus { border-color: #e5c158; }
+    .eye-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #a3c2b5; cursor: pointer; font-size: 18px; padding: 4px; }
+    .btn-gold { width: 100%; padding: 14px; background: #e5c158; border: none; border-radius: 10px; color: #0b251c; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; }
+    .btn-gold:active { transform: scale(0.98); opacity: 0.9; }
+    .btn-outline { width: 100%; padding: 10px; background: transparent; border: 1px solid #235843; border-radius: 8px; color: #a3c2b5; font-size: 12px; cursor: pointer; margin-top: 10px; }
+    .error-msg { color: #ff6b6b; font-size: 13px; margin-top: 12px; display: none; }
 
-    .mq-urdu-text {
-      font-family: 'Noto Nastaliq Urdu', 'Noto Serif Arabic', 'Urdu Typesetting', serif !important;
-      direction: rtl;
-      line-height: 2.2 !important;
-    }
+    /* Main Dashboard */
+    .dashboard { display: none; }
+    .header-banner { text-align: center; margin-bottom: 16px; padding: 10px 0; }
+    .urdu-poetry { font-family: 'Amiri', serif; font-size: 24px; color: #e5c158; line-height: 1.5; text-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+    
+    .notice-box { background: rgba(229, 193, 88, 0.1); border: 1px solid #e5c158; border-radius: 8px; padding: 10px; font-size: 11px; color: #e5c158; margin-bottom: 14px; text-align: center; line-height: 1.4; }
 
-    .mq-blob{position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0;}
-    .mq-blob.b1{width:320px;height:320px;top:-110px;left:-90px;background:radial-gradient(circle,rgba(212,175,55,.20),transparent 70%);}
-    .mq-blob.b2{width:360px;height:360px;bottom:60px;right:-140px;background:radial-gradient(circle,rgba(59,191,160,.16),transparent 70%);}
+    .card { background: #113326; border: 1px solid #1e4d3a; border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+    
+    /* Period Dropdown */
+    .period-selector { width: 100%; background: #081d15; border: 1px solid #235843; color: #eaf2ef; padding: 10px 14px; border-radius: 8px; font-size: 14px; outline: none; margin-bottom: 14px; }
 
-    .mq-quote-section{text-align:center;margin-bottom:20px;position:relative;z-index:1;}
-    .mq-quote-section .q{
-      font-size:24px;color:var(--gold-soft);
-      text-shadow:0 0 24px rgba(212,175,55,.25);
-    }
+    /* Summary Grid */
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .sum-box { background: #081d15; border-radius: 10px; padding: 12px 8px; text-align: center; border: 1px solid #1b4535; }
+    .sum-box label { font-size: 10px; color: #a3c2b5; font-weight: 700; display: block; margin-bottom: 4px; text-transform: uppercase; }
+    .sum-box span { font-size: 13px; font-weight: 700; }
+    .sum-box.collected span { color: #52c41a; }
+    .sum-box.spent span { color: #ff4d4f; }
+    .sum-box.balance span { color: #e5c158; }
 
-    .mq-wrap{max-width:520px;margin:0 auto;position:relative;z-index:1;}
+    /* Form Section */
+    .form-title { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+    .type-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+    .tab-btn { flex: 1; padding: 10px; background: #081d15; border: 1px solid #235843; border-radius: 8px; color: #a3c2b5; font-weight: 600; font-size: 13px; cursor: pointer; text-align: center; }
+    .tab-btn.active-collection { background: #1a4d36; border-color: #52c41a; color: #52c41a; }
+    .tab-btn.active-expense { background: #4d1a1a; border-color: #ff4d4f; color: #ff4d4f; }
 
-    .mq-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
-    .mq-mark{
-      width:44px;height:44px;border-radius:12px;flex-shrink:0;
-      background:linear-gradient(155deg, rgba(212,175,55,.28), rgba(59,191,160,.14));
-      border:1px solid var(--border-hi);
-      display:flex;align-items:center;justify-content:center;
-    }
-    .mq-header h1{font-size:16.5px;letter-spacing:.3px;color:var(--gold-soft);line-height:1.25;}
-    .mq-header p{margin:4px 0 0;color:var(--text-soft);font-size:11.5px;}
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 12px; color: #a3c2b5; margin-bottom: 4px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; background: #081d15; border: 1px solid #235843; border-radius: 8px; padding: 10px 12px; color: #fff; font-size: 14px; outline: none; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #e5c158; }
+    
+    .pay-mode-btns { display: flex; gap: 8px; }
+    .pay-mode-btn { flex: 1; padding: 8px; background: #081d15; border: 1px solid #235843; border-radius: 8px; color: #a3c2b5; font-size: 12px; cursor: pointer; text-align: center; }
+    .pay-mode-btn.active { border-color: #e5c158; color: #e5c158; background: #1d3d30; font-weight: 600; }
 
-    .mq-kpis{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;}
-    .mq-tile{
-      background:var(--glass);border:1px solid var(--border);border-radius:13px;padding:12px 10px;
-      position:relative;overflow:hidden;text-align:center;
-    }
-    .mq-tile .lbl{font-size:10px;color:var(--text-soft);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;}
-    .mq-tile .val{font-size:13.5px;font-weight:700;}
-    .mq-tile.emerald .val{color:var(--emerald);}
-    .mq-tile.rose .val{color:var(--rose);}
-    .mq-tile.gold .val{color:var(--gold-soft);}
+    .file-upload-btn { display: block; width: 100%; padding: 12px; background: #081d15; border: 1px dashed #235843; border-radius: 8px; text-align: center; color: #a3c2b5; font-size: 12px; cursor: pointer; }
+    .file-preview { margin-top: 8px; max-width: 80px; max-height: 80px; border-radius: 6px; display: none; }
 
-    .mq-hero{
-      position:relative;
-      background:linear-gradient(165deg, rgba(212,175,55,.10), rgba(59,191,160,.05));
-      border:1px solid var(--border-hi);border-radius:18px;
-      padding:16px;margin-bottom:14px;
-    }
-    .mq-hero select{
-      width:100%;background:rgba(255,255,255,.06);border:1px solid var(--border-hi);color:var(--text);
-      padding:10px 12px;border-radius:9px;font-size:14px;outline:none;
-    }
-
-    .mq-type-toggle{display:flex;gap:8px;margin-bottom:14px;}
-    .mq-type-btn{
-      flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);
-      background:rgba(255,255,255,.03);color:var(--text-soft);font-size:13.5px;
-      font-weight:600;cursor:pointer;min-height:46px;text-align:center;
-    }
-    .mq-type-btn.active.income{background:rgba(59,191,160,.18);border-color:var(--emerald);color:var(--emerald);}
-    .mq-type-btn.active.expense{background:var(--rose-bg);border-color:var(--rose);color:var(--rose);}
-
-    .mq-panel{
-      position:relative;background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-      border:1px solid var(--border);border-radius:16px;padding:18px 16px;margin-bottom:14px;
-    }
-    .mq-panel h2{font-size:15px;color:var(--text);margin-bottom:14px;}
-    .mq-field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
-    .mq-field label{font-size:12px;color:var(--text-soft);}
-    .mq-field input, .mq-field select{
-      width:100%;background:rgba(255,255,255,.045);border:1px solid var(--border);color:var(--text);
-      padding:12px 14px;border-radius:10px;font-size:15px;min-height:46px;
-    }
-    .mq-field input:focus, .mq-field select:focus{outline:none;border-color:var(--gold);}
-
-    .mq-method{display:flex;gap:8px;margin-bottom:12px;}
-    .mq-method button{
-      flex:1;padding:11px 8px;border-radius:10px;border:1px solid var(--border);
-      background:rgba(255,255,255,.03);color:var(--text-soft);font-size:12.5px;cursor:pointer;min-height:42px;
-    }
-    .mq-method button.active.online{background:rgba(59,191,160,.16);border-color:var(--emerald);color:var(--emerald);}
-    .mq-method button.active.physical{background:rgba(212,175,55,.16);border-color:var(--gold);color:var(--gold-soft);}
-
-    .mq-upload{
-      border:1px dashed var(--border-hi);border-radius:11px;padding:14px;text-align:center;
-      color:var(--text-soft);font-size:12.5px;cursor:pointer;background:rgba(255,255,255,.02);
-    }
-    .mq-thumb-wrap{width:90px;height:90px;border-radius:10px;overflow:hidden;margin-top:10px;border:1px solid var(--border-hi);}
-    .mq-thumb-wrap img{width:100%;height:100%;object-fit:cover;}
-
-    .mq-submit{
-      width:100%;margin-top:6px;background:linear-gradient(135deg,var(--gold),var(--gold-soft));color:#26210A;border:none;
-      padding:14px;border-radius:11px;font-size:15px;cursor:pointer;font-weight:600;min-height:48px;
-    }
-    .mq-submit.expense-btn{ background:linear-gradient(135deg,#E4677A,#C74B5E);color:#FFF; }
-
-    .mq-msg{font-size:13px;margin-top:10px;text-align:center;}
-    .mq-msg.err{color:var(--rose);}
-    .mq-msg.ok{color:var(--emerald);}
-
-    .mq-pills{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;}
-    .mq-pill{
-      background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text-soft);
-      padding:8px 12px;border-radius:20px;font-size:12px;cursor:pointer;white-space:nowrap;
-    }
-    .mq-pill.active{background:rgba(212,175,55,.16);border-color:var(--gold);color:var(--gold-soft);font-weight:600;}
-
-    .mq-entry{
-      background:rgba(255,255,255,.03);border:1px solid var(--border);
-      border-left:4px solid var(--glow, var(--border));
-      border-radius:12px;padding:12px 14px;margin-bottom:9px;font-size:13.5px;
-    }
-    .mq-entry-top{display:flex;gap:10px;align-items:flex-start;}
-    .mq-entry-main{flex:1;min-width:0;}
-    .mq-entry-name{font-weight:600;color:var(--text);}
-    .mq-entry-note{color:var(--text-soft);margin-top:3px;font-size:12px;}
-    .mq-entry-date{color:var(--text-faint);font-size:11px;margin-top:4px;}
-    .mq-entry-amt{font-family:'Fraunces',serif;font-weight:600;white-space:nowrap;font-size:15px;}
-    .mq-entry-amt.income{color:var(--emerald);}
-    .mq-entry-amt.expense{color:var(--rose);}
-    .mq-tag{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;margin-left:6px;text-transform:uppercase;}
-    .mq-tag.friday{background:rgba(212,175,55,.2);color:var(--gold-soft);border:1px solid var(--border-hi);}
-
-    .mq-lock-wrap{display:flex;align-items:center;justify-content:center;min-height:82vh;position:relative;z-index:1;}
-    .mq-lock-card{
-      max-width:340px;width:100%;text-align:center;
-      background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-      border:1px solid var(--border-hi);border-radius:20px;padding:32px 24px;
-    }
-    .mq-lock-card h1{font-size:16px;letter-spacing:.3px;margin-bottom:6px;color:var(--gold-soft);}
-    .mq-unlock-btn{
-      width:100%;background:linear-gradient(135deg,var(--gold),var(--gold-soft));color:#26210A;border:none;
-      padding:13px;border-radius:11px;font-size:14.5px;font-weight:600;cursor:pointer;min-height:48px;
-    }
-    .mq-pass-wrap{position:relative;margin:16px 0;}
-    .mq-eye{
-      position:absolute;right:4px;top:50%;transform:translateY(-50%);
-      background:none;border:none;padding:10px;cursor:pointer;color:var(--text-soft);
-    }
+    /* Drive Stream List */
+    .stream-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .entry-card { background: #081d15; border: 1px solid #1b4535; border-radius: 10px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .entry-info h4 { font-size: 14px; color: #fff; margin-bottom: 2px; }
+    .entry-info p { font-size: 11px; color: #a3c2b5; }
+    .entry-badge { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-top: 4px; background: #e5c158; color: #0b251c; }
+    .entry-amount { text-align: right; }
+    .entry-amount .val { font-size: 15px; font-weight: 700; }
+    .entry-amount .val.plus { color: #52c41a; }
+    .entry-amount .val.minus { color: #ff4d4f; }
+    .del-btn { background: none; border: none; color: #ff4d4f; font-size: 14px; margin-left: 10px; cursor: pointer; padding: 4px; }
+    
+    .backup-section { display: flex; gap: 8px; margin-top: 10px; }
   </style>
 </head>
 <body>
 
-<div class="mq-root" id="dlRoot"></div>
+<div class="app-container">
+  
+  <div id="lockScreen" class="lock-screen">
+    <h1>Mekhlooq Se Muhabbat</h1>
+    <p>Enter passcode to access drive ledger</p>
+    <div class="input-wrapper">
+      <input type="password" id="passcode" placeholder="Passcode" autocomplete="off">
+      <button type="button" class="eye-btn" onclick="togglePassVisibility(event)">👁️</button>
+    </div>
+    <button type="button" class="btn-gold" onclick="unlockLedger()">Unlock Ledger</button>
+    <div id="errorMsg" class="error-msg">Incorrect passcode</div>
+  </div>
+
+  <div id="dashboard" class="dashboard">
+    <div class="header-banner">
+      <div class="urdu-poetry">اس راہ کے مسافر ہیں، اسی راہ میں ملیں گے</div>
+    </div>
+
+    <div class="notice-box">
+      💡 <b>Tip:</b> Website ko Chrome/Safari me kholein aur "Add to Home Screen" karein taake apka data hamesha safe rahe.
+    </div>
+
+    <div class="card">
+      <select id="periodSelect" class="period-selector" onchange="renderEntries()">
+        <option value="September 2026">Period: September 2026</option>
+        <option value="August 2026">Period: August 2026</option>
+      </select>
+      <div class="summary-grid">
+        <div class="sum-box collected">
+          <label>Collected</label>
+          <span id="sumCollected">Rs. 0</span>
+        </div>
+        <div class="sum-box spent">
+          <label>Spent</label>
+          <span id="sumSpent">Rs. 0</span>
+        </div>
+        <div class="sum-box balance">
+          <label>Net Balance</label>
+          <span id="sumBalance">Rs. 0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="form-title">Log New Entry</div>
+      <div class="type-tabs">
+        <div id="tabCollection" class="tab-btn active-collection" onclick="setEntryType('collection')">+ Collection</div>
+        <div id="tabExpense" class="tab-btn" onclick="setEntryType('expense')">- Expense</div>
+      </div>
+
+      <form id="entryForm" onsubmit="saveEntry(event)">
+        <div class="form-group">
+          <label id="nameLabel">Donor / Supporter Name *</label>
+          <input type="text" id="donorName" required placeholder="e.g., Brother Ali">
+        </div>
+
+        <div class="form-group">
+          <label>Amount (PKR) *</label>
+          <input type="number" id="amount" required placeholder="0">
+        </div>
+
+        <div class="form-group">
+          <label>Date *</label>
+          <input type="date" id="entryDate" required>
+        </div>
+
+        <div class="form-group">
+          <div class="pay-mode-btns">
+            <div id="modeOnline" class="pay-mode-btn active" onclick="setPayMode('Online Transfer')">Online Transfer</div>
+            <div id="modeCash" class="pay-mode-btn" onclick="setPayMode('Cash In Hand')">Cash In Hand</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Handled / Received By</label>
+          <input type="text" id="handledBy" placeholder="e.g., Volunteer name">
+        </div>
+
+        <div class="form-group">
+          <label>Receipt / Proof Image (Optional)</label>
+          <label for="receiptFile" class="file-upload-btn">Tap to attach bill or transfer receipt</label>
+          <input type="file" id="receiptFile" accept="image/*" style="display:none;" onchange="handleImageCompress(event)">
+          <img id="imagePreview" class="file-preview" alt="Preview">
+        </div>
+
+        <div class="form-group">
+          <label>Note</label>
+          <textarea id="noteText" rows="2" placeholder="Additional details..."></textarea>
+        </div>
+
+        <button type="submit" id="saveBtn" class="btn-gold">Save Collection</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="stream-header">
+        <div class="form-title" style="margin:0;">Drive Stream</div>
+      </div>
+      <div id="entriesList"></div>
+
+      <div class="backup-section">
+        <button type="button" class="btn-outline" onclick="exportData()">📥 Backup Data</button>
+        <button type="button" class="btn-outline" onclick="lockApp()">🔒 Lock App</button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
 
 <script>
-(function(){
-  const root = document.getElementById('dlRoot');
-  const ORG_NAME = "MEKHLOOQ SE MUHABBAT";
-  const TAGLINE = "Friday Drive Collections & Expense Ledger";
-  const QUOTE_UR = "اس راہ کے مسافر ہیں، اسی راہ میں ملیں گے";
-  const PASSCODE = "langarkahissa"; 
+  let currentType = 'collection';
+  let currentPayMode = 'Online Transfer';
+  let compressedImageData = '';
 
-  let unlocked = false;
-  let lockMsg = '';
-  let passVisible = false;
-  let records = [];
-  let selectedMonth = safeMonthKey(new Date());
-  
-  let recordType = 'income'; 
-  let method = 'online';
-  let screenshotDataUrl = null;
-  let submitting = false;
-  let formMsg = null;
-  let listFilter = 'all';
+  // Setup Date Default
+  document.getElementById('entryDate').valueAsDate = new Date();
 
-  function parseSafeDate(dateStr) {
-    if (!dateStr) return new Date();
-    const parts = dateStr.split('-');
-    if (parts.length === 3) {
-      return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+  // Check Persistent Unlock Status (localStorage instead of sessionStorage)
+  if (localStorage.getItem('isUnlocked') === 'true') {
+    showDashboard();
+  }
+
+  function togglePassVisibility(e) {
+    if (e) e.preventDefault();
+    const input = document.getElementById('passcode');
+    const val = input.value;
+    input.type = input.type === 'password' ? 'text' : 'password';
+    input.value = val; // Preserve value to avoid iOS/Android password auto-clear
+  }
+
+  function unlockLedger() {
+    const val = document.getElementById('passcode').value.trim().toLowerCase();
+    if (val === 'langarkahissa') {
+      localStorage.setItem('isUnlocked', 'true');
+      showDashboard();
+    } else {
+      document.getElementById('errorMsg').style.display = 'block';
     }
-    return new Date(dateStr);
   }
 
-  function isFridayDate(dateStr) {
-    return parseSafeDate(dateStr).getDay() === 5;
+  function lockApp() {
+    localStorage.removeItem('isUnlocked');
+    location.reload();
   }
 
-  function safeMonthKey(d){ 
-    const dateObj = (typeof d === 'string') ? parseSafeDate(d) : d;
-    return dateObj.getFullYear() + '-' + String(dateObj.getMonth()+1).padStart(2,'0'); 
+  function showDashboard() {
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    renderEntries();
   }
 
-  function monthLabel(key){
-    const parts = key.split('-');
-    return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, 1).toLocaleString('en-US',{month:'long',year:'numeric'});
+  function setEntryType(type) {
+    currentType = type;
+    const tabCol = document.getElementById('tabCollection');
+    const tabExp = document.getElementById('tabExpense');
+    const saveBtn = document.getElementById('saveBtn');
+    const nameLabel = document.getElementById('nameLabel');
+
+    if (type === 'collection') {
+      tabCol.className = 'tab-btn active-collection';
+      tabExp.className = 'tab-btn';
+      saveBtn.innerText = 'Save Collection';
+      nameLabel.innerText = 'Donor / Supporter Name *';
+    } else {
+      tabCol.className = 'tab-btn';
+      tabExp.className = 'tab-btn active-expense';
+      saveBtn.innerText = 'Save Expense';
+      nameLabel.innerText = 'Expense Title / Detail *';
+    }
   }
 
-  function fmtAmt(n){ return 'Rs. ' + Number(n).toLocaleString('en-PK'); }
-  function fmtDate(iso){ 
-    const d = parseSafeDate(iso);
-    return `${d.toLocaleDateString('en-US',{weekday:'short'})}, ${d.toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'})}`; 
+  function setPayMode(mode) {
+    currentPayMode = mode;
+    document.getElementById('modeOnline').className = 'pay-mode-btn ' + (mode === 'Online Transfer' ? 'active' : '');
+    document.getElementById('modeCash').className = 'pay-mode-btn ' + (mode === 'Cash In Hand' ? 'active' : '');
   }
-  function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
 
-  function loadRecords(){
-    try{
-      let items = [];
-      for(let i=0; i<localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if(k && (k.startsWith('records:') || k.startsWith('entries:'))) {
-          const parsed = JSON.parse(localStorage.getItem(k));
-          if(!parsed.type) parsed.type = 'income';
-          items.push(parsed);
+  // Safe High-Compression Image Handler
+  function handleImageCompress(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        const maxDim = 200; // Small size to save memory & prevent crash
+
+        if (width > height) {
+          if (width > maxDim) { height *= maxDim / width; width = maxDim; }
+        } else {
+          if (height > maxDim) { width *= maxDim / height; height = maxDim; }
         }
-      }
-      const uniqueMap = new Map();
-      items.forEach(item => uniqueMap.set(item.id, item));
-      items = Array.from(uniqueMap.values());
-      items.sort((a,b)=> (b.date+b.createdAt) < (a.date+a.createdAt) ? -1 : 1);
-      records = items;
-    } catch(e){ records = []; }
-    render();
-  }
-
-  function compressImage(file){
-    return new Promise((resolve,reject)=>{
-      const reader = new FileReader();
-      reader.onload = () => {
-        const img = new Image();
-        img.onload = () => {
-          const maxDim = 800; let w = img.width, h = img.height;
-          if(w > maxDim || h > maxDim){
-            if(w > h){ h = Math.round(h*maxDim/w); w = maxDim; } else { w = Math.round(w*maxDim/h); h = maxDim; }
-          }
-          const canvas = document.createElement('canvas'); canvas.width=w; canvas.height=h;
-          canvas.getContext('2d').drawImage(img,0,0,w,h);
-          resolve(canvas.toDataURL('image/jpeg',0.65));
-        };
-        img.onerror = reject; img.src = reader.result;
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        try {
+          compressedImageData = canvas.toDataURL('image/jpeg', 0.3);
+          const preview = document.getElementById('imagePreview');
+          preview.src = compressedImageData;
+          preview.style.display = 'block';
+        } catch(err) {
+          alert("Image processing failed. Try without image.");
+          compressedImageData = '';
+        }
       };
-      reader.onerror = reject; reader.readAsDataURL(file);
-    });
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
   }
 
-  function submitRecord(e){
+  function saveEntry(e) {
     e.preventDefault();
-    if(submitting) return;
-    const form = e.target;
     
-    const title = form.dl_title.value.trim();
-    const amount = parseFloat(form.dl_amount.value);
-    const date = form.dl_date.value;
-    const category = form.dl_category ? form.dl_category.value : 'General';
-    const handler = form.dl_handler ? form.dl_handler.value.trim() : '';
-    const extraNote = form.dl_note ? form.dl_note.value.trim() : '';
+    const entry = {
+      id: Date.now(),
+      type: currentType,
+      name: document.getElementById('donorName').value,
+      amount: parseFloat(document.getElementById('amount').value),
+      date: document.getElementById('entryDate').value,
+      mode: currentPayMode,
+      handledBy: document.getElementById('handledBy').value,
+      receipt: compressedImageData,
+      note: document.getElementById('noteText').value
+    };
 
-    if(!title || !amount || amount <= 0 || !date){
-      formMsg = {type:'err', text:'Please enter a valid title, amount, and date.'}; render(); return;
+    let entries = JSON.parse(localStorage.getItem('drive_entries') || '[]');
+    entries.unshift(entry);
+    
+    try {
+      localStorage.setItem('drive_entries', JSON.stringify(entries));
+    } catch(err) {
+      alert("Storage quota full! Saving entry without image.");
+      entry.receipt = '';
+      localStorage.setItem('drive_entries', JSON.stringify(entries));
     }
 
-    const record = {
-      id: 'r_' + Date.now() + Math.random().toString(36).slice(2,6),
-      type: recordType,
-      title, 
-      amount, 
-      date, 
-      isFriday: isFridayDate(date),
-      category: recordType === 'expense' ? category : null,
-      method: recordType === 'income' ? method : null,
-      handler: handler || null,
-      note: extraNote || null,
-      screenshot: screenshotDataUrl || null,
-      monthKey: safeMonthKey(date),
-      createdAt: new Date().toISOString()
-    };
+    // Reset Form safely
+    document.getElementById('entryForm').reset();
+    document.getElementById('imagePreview').style.display = 'none';
+    compressedImageData = '';
+    document.getElementById('entryDate').valueAsDate = new Date();
 
-    submitting = true; formMsg = null; render();
-    localStorage.setItem('records:' + record.id, JSON.stringify(record));
-    records.unshift(record);
-    selectedMonth = record.monthKey;
-    screenshotDataUrl = null;
-    formMsg = {type:'ok', text: recordType === 'income' ? 'Donation recorded successfully!' : 'Expense logged successfully!'};
-    submitting = false; render();
+    renderEntries();
   }
 
-  function computeStats(list){
-    const totalCollected = list.filter(r => r.type === 'income').reduce((s,r) => s + r.amount, 0);
-    const totalSpent = list.filter(r => r.type === 'expense').reduce((s,r) => s + r.amount, 0);
-    return { totalCollected, totalSpent, netBalance: totalCollected - totalSpent };
-  }
-
-  function renderLock(){
-    root.innerHTML = `
-      <div class="mq-lock-wrap">
-        <div class="mq-lock-card">
-          <h1>${ORG_NAME}</h1>
-          <p style="color:var(--text-soft);font-size:12px;">Enter passcode to access drive ledger</p>
-          <div class="mq-field mq-pass-wrap">
-            <input type="${passVisible?'text':'password'}" id="dlPass" placeholder="Passcode" style="text-align:center;" />
-            <button type="button" class="mq-eye" id="dlEyeToggle">${passVisible?'🙈':'👁️'}</button>
-          </div>
-          <button id="dlUnlockBtn" class="mq-unlock-btn">Unlock Ledger</button>
-          ${lockMsg ? `<div class="mq-msg err">${lockMsg}</div>` : ''}
-        </div>
-      </div>`;
-    
-    document.getElementById('dlUnlockBtn').onclick = () => {
-      if(document.getElementById('dlPass').value === PASSCODE){ unlocked = true; render(); loadRecords(); }
-      else { lockMsg = 'Incorrect passcode'; renderLock(); }
-    };
-    document.getElementById('dlEyeToggle').onclick = () => { passVisible = !passVisible; renderLock(); };
-  }
-
-  function render(){
-    if(!unlocked){ renderLock(); return; }
-
-    const months = Array.from(new Set(records.map(r=>r.monthKey)));
-    if(!months.includes(selectedMonth)) months.push(selectedMonth);
-    months.sort().reverse();
-
-    const monthRecords = records.filter(r=>r.monthKey===selectedMonth);
-    const stats = computeStats(monthRecords);
-    const todayStr = new Date().toISOString().slice(0,10);
-
-    let displayRecords = monthRecords;
-    if(listFilter === 'income') displayRecords = displayRecords.filter(r => r.type === 'income');
-    if(listFilter === 'expense') displayRecords = displayRecords.filter(r => r.type === 'expense');
-    if(listFilter === 'friday') displayRecords = displayRecords.filter(r => r.isFriday);
-
-    root.innerHTML = `
-      <div class="mq-blob b1"></div><div class="mq-blob b2"></div>
-      <div class="mq-wrap">
-        <header class="mq-header">
-          <div class="mq-mark">🤲</div>
-          <div><h1>${ORG_NAME}</h1><p>${TAGLINE}</p></div>
-        </header>
-
-        <div class="mq-quote-section">
-          <div class="q mq-urdu-text">${QUOTE_UR}</div>
-        </div>
-
-        <section class="mq-hero">
-          <select id="dlMonthSel">${months.map(m => `<option value="${m}" ${m===selectedMonth?'selected':''}>📅 Period: ${monthLabel(m)}</option>`).join('')}</select>
-        </section>
-
-        <div class="mq-kpis">
-          <div class="mq-tile emerald">
-            <div class="lbl">Collected</div>
-            <div class="val">${fmtAmt(stats.totalCollected)}</div>
-          </div>
-          <div class="mq-tile rose">
-            <div class="lbl">Spent</div>
-            <div class="val">${fmtAmt(stats.totalSpent)}</div>
-          </div>
-          <div class="mq-tile gold">
-            <div class="lbl">Net Balance</div>
-            <div class="val">${fmtAmt(stats.netBalance)}</div>
-          </div>
-        </div>
-
-        <section class="mq-panel">
-          <h2>Log New Entry</h2>
-          
-          <div class="mq-type-toggle">
-            <button type="button" id="tIncome" class="mq-type-btn ${recordType==='income'?'active income':''}">+ Collection</button>
-            <button type="button" id="tExpense" class="mq-type-btn ${recordType==='expense'?'active expense':''}">- Expense</button>
-          </div>
-
-          <form id="dlForm">
-            <div class="mq-field">
-              <label>${recordType==='income' ? 'Donor / Supporter Name *' : 'Expense Item *'}</label>
-              <input type="text" name="dl_title" placeholder="${recordType==='income'?'e.g., Brother Ali':'e.g., Rice, Meat, Deg charges'}" required />
-            </div>
-
-            <div class="mq-field">
-              <label>Amount (PKR) *</label>
-              <input type="number" name="dl_amount" placeholder="0" required />
-            </div>
-
-            <div class="mq-field">
-              <label>Date *</label>
-              <input type="date" name="dl_date" value="${todayStr}" required />
-            </div>
-
-            ${recordType === 'expense' ? `
-              <div class="mq-field">
-                <label>Category</label>
-                <select name="dl_category">
-                  <option value="Food & Ingredients">Food & Ingredients (Rice, Meat, Oil)</option>
-                  <option value="Deg & Cook Charges">Deg / Catering Service</option>
-                  <option value="Packaging & Disposable">Packaging & Disposable Plates</option>
-                  <option value="Transport & Fuel">Transport & Delivery</option>
-                  <option value="Misc / Other">Misc Drive Expense</option>
-                </select>
-              </div>
-            ` : `
-              <div class="mq-method">
-                <button type="button" id="mOnline" class="${method==='online'?'active online':''}">Online Transfer</button>
-                <button type="button" id="mPhysical" class="${method==='physical'?'active physical':''}">Cash In Hand</button>
-              </div>
-            `}
-
-            <div class="mq-field">
-              <label>Handled / Received By</label>
-              <input type="text" name="dl_handler" placeholder="e.g., Volunteer name" />
-            </div>
-
-            <div class="mq-field">
-              <label>Receipt / Proof Image (Optional)</label>
-              <div class="mq-upload" id="dlUpArea">Tap to attach bill or transfer receipt</div>
-              <input type="file" id="dlFileInput" accept="image/*" style="display:none;" />
-              ${screenshotDataUrl ? `<div class="mq-thumb-wrap"><img src="${screenshotDataUrl}"/></div>` : ''}
-            </div>
-
-            <div class="mq-field">
-              <label>Note</label>
-              <input type="text" name="dl_note" placeholder="Additional details..." />
-            </div>
-
-            <button type="submit" class="mq-submit ${recordType==='expense'?'expense-btn':''}" ${submitting?'disabled':''}>
-              ${submitting ? 'Saving...' : (recordType === 'income' ? 'Save Collection' : 'Log Expense')}
-            </button>
-            ${formMsg ? `<div class="mq-msg ${formMsg.type}">${formMsg.text}</div>` : ''}
-          </form>
-        </section>
-
-        <section class="mq-panel">
-          <h2>Drive Stream (${displayRecords.length})</h2>
-          
-          <div class="mq-pills">
-            <button type="button" class="mq-pill ${listFilter==='all'?'active':''}" id="fAll">All</button>
-            <button type="button" class="mq-pill ${listFilter==='friday'?'active':''}" id="fFriday">🕌 Friday Drives</button>
-            <button type="button" class="mq-pill ${listFilter==='income'?'active':''}" id="fIncome">Collections (+)</button>
-            <button type="button" class="mq-pill ${listFilter==='expense'?'active':''}" id="fExpense">Expenses (-)</button>
-          </div>
-
-          <div id="dlEntriesList">
-            ${displayRecords.length === 0 ? '<div style="text-align:center;color:var(--text-faint);padding:20px 0;">No records found.</div>' :
-              displayRecords.map(r => `
-                <div class="mq-entry" style="--glow:${r.type==='income'?'var(--emerald)':'var(--rose)'}">
-                  <div class="mq-entry-top">
-                    <div class="mq-entry-main">
-                      <div class="mq-entry-name">
-                        ${escapeHtml(r.title)}
-                        ${r.isFriday ? '<span class="mq-tag friday">Friday Drive</span>' : ''}
-                      </div>
-                      <div class="mq-entry-date">
-                        ${fmtDate(r.date)} ${r.category ? '• '+r.category : ''} ${r.method ? '• '+r.method : ''}
-                      </div>
-                      ${r.handler ? `<div class="mq-entry-note">Handled by: ${escapeHtml(r.handler)}</div>` : ''}
-                      ${r.note ? `<div class="mq-entry-note">${escapeHtml(r.note)}</div>` : ''}
-                    </div>
-                    <div class="mq-entry-amt ${r.type}">
-                      ${r.type==='income' ? '+' : '-'}${fmtAmt(r.amount)}
-                    </div>
-                  </div>
-                </div>
-              `).join('')
-            }
-          </div>
-        </section>
-      </div>`;
-
-    document.getElementById('dlMonthSel').onchange = (e) => { selectedMonth = e.target.value; render(); };
-    document.getElementById('dlForm').onsubmit = submitRecord;
-    
-    document.getElementById('tIncome').onclick = () => { recordType = 'income'; render(); };
-    document.getElementById('tExpense').onclick = () => { recordType = 'expense'; render(); };
-
-    const mOnline = document.getElementById('mOnline');
-    const mPhysical = document.getElementById('mPhysical');
-    if(mOnline) mOnline.onclick = () => { method = 'online'; render(); };
-    if(mPhysical) mPhysical.onclick = () => { method = 'physical'; render(); };
-
-    document.getElementById('fAll').onclick = () => { listFilter = 'all'; render(); };
-    document.getElementById('fFriday').onclick = () => { listFilter = 'friday'; render(); };
-    document.getElementById('fIncome').onclick = () => { listFilter = 'income'; render(); };
-    document.getElementById('fExpense').onclick = () => { listFilter = 'expense'; render(); };
-
-    const upArea = document.getElementById('dlUpArea');
-    const fileInput = document.getElementById('dlFileInput');
-    if(upArea && fileInput) {
-      upArea.onclick = () => fileInput.click();
-      fileInput.onchange = (e) => {
-        if(e.target.files[0]) compressImage(e.target.files[0]).then(url => { screenshotDataUrl = url; render(); });
-      };
+  function deleteEntry(id) {
+    if (confirm("Delete this entry?")) {
+      let entries = JSON.parse(localStorage.getItem('drive_entries') || '[]');
+      entries = entries.filter(e => e.id !== id);
+      localStorage.setItem('drive_entries', JSON.stringify(entries));
+      renderEntries();
     }
   }
 
-  render();
-})();
+  function renderEntries() {
+    const entries = JSON.parse(localStorage.getItem('drive_entries') || '[]');
+    const container = document.getElementById('entriesList');
+    container.innerHTML = '';
+
+    let totalCol = 0;
+    let totalExp = 0;
+
+    if (entries.length === 0) {
+      container.innerHTML = '<div style="text-align:center; color:#a3c2b5; font-size:13px; padding:16px;">No entries logged yet.</div>';
+    }
+
+    entries.forEach(item => {
+      if (item.type === 'collection') totalCol += item.amount;
+      else totalExp += item.amount;
+
+      const card = document.createElement('div');
+      card.className = 'entry-card';
+      card.innerHTML = `
+        <div class="entry-info">
+          <h4>${item.name}</h4>
+          <p>${item.date} • ${item.mode} ${item.handledBy ? '• By: ' + item.handledBy : ''}</p>
+          <span class="entry-badge">${item.type.toUpperCase()}</span>
+        </div>
+        <div class="entry-amount">
+          <div class="val ${item.type === 'collection' ? 'plus' : 'minus'}">
+            ${item.type === 'collection' ? '+' : '-'}Rs. ${item.amount.toLocaleString()}
+          </div>
+          <button type="button" class="del-btn" onclick="deleteEntry(${item.id})">🗑️</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    document.getElementById('sumCollected').innerText = `Rs. ${totalCol.toLocaleString()}`;
+    document.getElementById('sumSpent').innerText = `Rs. ${totalExp.toLocaleString()}`;
+    document.getElementById('sumBalance').innerText = `Rs. ${(totalCol - totalExp).toLocaleString()}`;
+  }
+
+  function exportData() {
+    const entries = localStorage.getItem('drive_entries') || '[]';
+    const blob = new Blob([entries], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `ledger-backup-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+  }
 </script>
+
 </body>
 </html>
