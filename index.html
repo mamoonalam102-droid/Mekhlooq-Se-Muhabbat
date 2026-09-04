@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Mekhlooq Se Muhabbat - Drive Ledger</title>
+  <title>Mekhlooq Se Muhabbat - Cloud Ledger</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -21,23 +21,15 @@
     .input-wrapper input:focus { border-color: #e5c158; }
     .eye-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #a3c2b5; cursor: pointer; font-size: 18px; padding: 4px; }
     .btn-gold { width: 100%; padding: 14px; background: #e5c158; border: none; border-radius: 10px; color: #0b251c; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; }
-    .btn-gold:active { transform: scale(0.98); opacity: 0.9; }
-    .btn-outline { width: 100%; padding: 10px; background: transparent; border: 1px solid #235843; border-radius: 8px; color: #a3c2b5; font-size: 12px; cursor: pointer; margin-top: 10px; }
+    .btn-gold:disabled { opacity: 0.6; cursor: not-allowed; }
     .error-msg { color: #ff6b6b; font-size: 13px; margin-top: 12px; display: none; }
 
-    /* Main Dashboard */
+    /* Dashboard */
     .dashboard { display: none; }
     .header-banner { text-align: center; margin-bottom: 16px; padding: 10px 0; }
-    .urdu-poetry { font-family: 'Amiri', serif; font-size: 24px; color: #e5c158; line-height: 1.5; text-shadow: 0 2px 4px rgba(0,0,0,0.4); }
-    
-    .notice-box { background: rgba(229, 193, 88, 0.1); border: 1px solid #e5c158; border-radius: 8px; padding: 10px; font-size: 11px; color: #e5c158; margin-bottom: 14px; text-align: center; line-height: 1.4; }
-
+    .urdu-poetry { font-family: 'Amiri', serif; font-size: 24px; color: #e5c158; line-height: 1.5; }
     .card { background: #113326; border: 1px solid #1e4d3a; border-radius: 14px; padding: 16px; margin-bottom: 16px; }
     
-    /* Period Dropdown */
-    .period-selector { width: 100%; background: #081d15; border: 1px solid #235843; color: #eaf2ef; padding: 10px 14px; border-radius: 8px; font-size: 14px; outline: none; margin-bottom: 14px; }
-
-    /* Summary Grid */
     .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
     .sum-box { background: #081d15; border-radius: 10px; padding: 12px 8px; text-align: center; border: 1px solid #1b4535; }
     .sum-box label { font-size: 10px; color: #a3c2b5; font-weight: 700; display: block; margin-bottom: 4px; text-transform: uppercase; }
@@ -46,7 +38,6 @@
     .sum-box.spent span { color: #ff4d4f; }
     .sum-box.balance span { color: #e5c158; }
 
-    /* Form Section */
     .form-title { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 12px; }
     .type-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
     .tab-btn { flex: 1; padding: 10px; background: #081d15; border: 1px solid #235843; border-radius: 8px; color: #a3c2b5; font-weight: 600; font-size: 13px; cursor: pointer; text-align: center; }
@@ -55,18 +46,12 @@
 
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; font-size: 12px; color: #a3c2b5; margin-bottom: 4px; }
-    .form-group input, .form-group select, .form-group textarea { width: 100%; background: #081d15; border: 1px solid #235843; border-radius: 8px; padding: 10px 12px; color: #fff; font-size: 14px; outline: none; }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #e5c158; }
+    .form-group input, .form-group textarea { width: 100%; background: #081d15; border: 1px solid #235843; border-radius: 8px; padding: 10px 12px; color: #fff; font-size: 14px; outline: none; }
     
     .pay-mode-btns { display: flex; gap: 8px; }
     .pay-mode-btn { flex: 1; padding: 8px; background: #081d15; border: 1px solid #235843; border-radius: 8px; color: #a3c2b5; font-size: 12px; cursor: pointer; text-align: center; }
     .pay-mode-btn.active { border-color: #e5c158; color: #e5c158; background: #1d3d30; font-weight: 600; }
 
-    .file-upload-btn { display: block; width: 100%; padding: 12px; background: #081d15; border: 1px dashed #235843; border-radius: 8px; text-align: center; color: #a3c2b5; font-size: 12px; cursor: pointer; }
-    .file-preview { margin-top: 8px; max-width: 80px; max-height: 80px; border-radius: 6px; display: none; }
-
-    /* Drive Stream List */
-    .stream-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .entry-card { background: #081d15; border: 1px solid #1b4535; border-radius: 10px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
     .entry-info h4 { font-size: 14px; color: #fff; margin-bottom: 2px; }
     .entry-info p { font-size: 11px; color: #a3c2b5; }
@@ -75,18 +60,17 @@
     .entry-amount .val { font-size: 15px; font-weight: 700; }
     .entry-amount .val.plus { color: #52c41a; }
     .entry-amount .val.minus { color: #ff4d4f; }
-    .del-btn { background: none; border: none; color: #ff4d4f; font-size: 14px; margin-left: 10px; cursor: pointer; padding: 4px; }
-    
-    .backup-section { display: flex; gap: 8px; margin-top: 10px; }
+    .status-msg { text-align: center; color: #e5c158; font-size: 12px; margin-top: 8px; display: none; }
   </style>
 </head>
 <body>
 
 <div class="app-container">
   
+  <!-- LOCK SCREEN -->
   <div id="lockScreen" class="lock-screen">
     <h1>Mekhlooq Se Muhabbat</h1>
-    <p>Enter passcode to access drive ledger</p>
+    <p>Enter passcode to access cloud ledger</p>
     <div class="input-wrapper">
       <input type="password" id="passcode" placeholder="Passcode" autocomplete="off">
       <button type="button" class="eye-btn" onclick="togglePassVisibility(event)">👁️</button>
@@ -95,20 +79,14 @@
     <div id="errorMsg" class="error-msg">Incorrect passcode</div>
   </div>
 
+  <!-- DASHBOARD -->
   <div id="dashboard" class="dashboard">
     <div class="header-banner">
       <div class="urdu-poetry">اس راہ کے مسافر ہیں، اسی راہ میں ملیں گے</div>
     </div>
 
-    <div class="notice-box">
-      💡 <b>Tip:</b> Website ko Chrome/Safari me kholein aur "Add to Home Screen" karein taake apka data hamesha safe rahe.
-    </div>
-
+    <!-- SUMMARY -->
     <div class="card">
-      <select id="periodSelect" class="period-selector" onchange="renderEntries()">
-        <option value="September 2026">Period: September 2026</option>
-        <option value="August 2026">Period: August 2026</option>
-      </select>
       <div class="summary-grid">
         <div class="sum-box collected">
           <label>Collected</label>
@@ -125,6 +103,7 @@
       </div>
     </div>
 
+    <!-- LOG NEW ENTRY -->
     <div class="card">
       <div class="form-title">Log New Entry</div>
       <div class="type-tabs">
@@ -161,31 +140,19 @@
         </div>
 
         <div class="form-group">
-          <label>Receipt / Proof Image (Optional)</label>
-          <label for="receiptFile" class="file-upload-btn">Tap to attach bill or transfer receipt</label>
-          <input type="file" id="receiptFile" accept="image/*" style="display:none;" onchange="handleImageCompress(event)">
-          <img id="imagePreview" class="file-preview" alt="Preview">
-        </div>
-
-        <div class="form-group">
           <label>Note</label>
           <textarea id="noteText" rows="2" placeholder="Additional details..."></textarea>
         </div>
 
-        <button type="submit" id="saveBtn" class="btn-gold">Save Collection</button>
+        <button type="submit" id="saveBtn" class="btn-gold">Save Entry to Cloud</button>
+        <div id="statusMsg" class="status-msg">Saving to Cloud Database...</div>
       </form>
     </div>
 
+    <!-- DRIVE STREAM -->
     <div class="card">
-      <div class="stream-header">
-        <div class="form-title" style="margin:0;">Drive Stream</div>
-      </div>
-      <div id="entriesList"></div>
-
-      <div class="backup-section">
-        <button type="button" class="btn-outline" onclick="exportData()">📥 Backup Data</button>
-        <button type="button" class="btn-outline" onclick="lockApp()">🔒 Lock App</button>
-      </div>
+      <div class="form-title">Drive Stream (Cloud Synced)</div>
+      <div id="entriesList">Loading records...</div>
     </div>
 
   </div>
@@ -193,14 +160,14 @@
 </div>
 
 <script>
+  // YOUR GOOGLE APPS SCRIPT URL CONNECTED:
+  const CLOUD_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWlGiiPu7XvBKO9xWu_5fWVzBSBhRJEtBllA9_oqVHa1b9QUJzRfu-llg4-bS8D_KW/exec";
+
   let currentType = 'collection';
   let currentPayMode = 'Online Transfer';
-  let compressedImageData = '';
 
-  // Setup Date Default
   document.getElementById('entryDate').valueAsDate = new Date();
 
-  // Check Persistent Unlock Status (localStorage instead of sessionStorage)
   if (localStorage.getItem('isUnlocked') === 'true') {
     showDashboard();
   }
@@ -210,7 +177,7 @@
     const input = document.getElementById('passcode');
     const val = input.value;
     input.type = input.type === 'password' ? 'text' : 'password';
-    input.value = val; // Preserve value to avoid iOS/Android password auto-clear
+    input.value = val;
   }
 
   function unlockLedger() {
@@ -223,35 +190,18 @@
     }
   }
 
-  function lockApp() {
-    localStorage.removeItem('isUnlocked');
-    location.reload();
-  }
-
   function showDashboard() {
     document.getElementById('lockScreen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
-    renderEntries();
+    fetchCloudEntries();
   }
 
   function setEntryType(type) {
     currentType = type;
-    const tabCol = document.getElementById('tabCollection');
-    const tabExp = document.getElementById('tabExpense');
-    const saveBtn = document.getElementById('saveBtn');
-    const nameLabel = document.getElementById('nameLabel');
-
-    if (type === 'collection') {
-      tabCol.className = 'tab-btn active-collection';
-      tabExp.className = 'tab-btn';
-      saveBtn.innerText = 'Save Collection';
-      nameLabel.innerText = 'Donor / Supporter Name *';
-    } else {
-      tabCol.className = 'tab-btn';
-      tabExp.className = 'tab-btn active-expense';
-      saveBtn.innerText = 'Save Expense';
-      nameLabel.innerText = 'Expense Title / Detail *';
-    }
+    document.getElementById('tabCollection').className = 'tab-btn ' + (type === 'collection' ? 'active-collection' : '');
+    document.getElementById('tabExpense').className = 'tab-btn ' + (type === 'expense' ? 'active-expense' : '');
+    document.getElementById('saveBtn').innerText = type === 'collection' ? 'Save Collection to Cloud' : 'Save Expense to Cloud';
+    document.getElementById('nameLabel').innerText = type === 'collection' ? 'Donor / Supporter Name *' : 'Expense Title / Detail *';
   }
 
   function setPayMode(mode) {
@@ -260,49 +210,29 @@
     document.getElementById('modeCash').className = 'pay-mode-btn ' + (mode === 'Cash In Hand' ? 'active' : '');
   }
 
-  // Safe High-Compression Image Handler
-  function handleImageCompress(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+  async function fetchCloudEntries() {
+    const container = document.getElementById('entriesList');
+    container.innerHTML = '<div style="text-align:center; color:#e5c158; padding:12px;">Syncing with Cloud...</div>';
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const img = new Image();
-      img.onload = function() {
-        const canvas = document.createElement('canvas');
-        let width = img.width;
-        let height = img.height;
-        const maxDim = 200; // Small size to save memory & prevent crash
-
-        if (width > height) {
-          if (width > maxDim) { height *= maxDim / width; width = maxDim; }
-        } else {
-          if (height > maxDim) { width *= maxDim / height; height = maxDim; }
-        }
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-        
-        try {
-          compressedImageData = canvas.toDataURL('image/jpeg', 0.3);
-          const preview = document.getElementById('imagePreview');
-          preview.src = compressedImageData;
-          preview.style.display = 'block';
-        } catch(err) {
-          alert("Image processing failed. Try without image.");
-          compressedImageData = '';
-        }
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
+    try {
+      const response = await fetch(CLOUD_SCRIPT_URL);
+      const data = await response.json();
+      renderEntries(data.reverse());
+    } catch(err) {
+      container.innerHTML = '<div style="text-align:center; color:#ff4d4f; padding:12px;">Failed to load data. Check internet connection.</div>';
+    }
   }
 
-  function saveEntry(e) {
+  async function saveEntry(e) {
     e.preventDefault();
-    
-    const entry = {
+    const saveBtn = document.getElementById('saveBtn');
+    const statusMsg = document.getElementById('statusMsg');
+
+    saveBtn.disabled = true;
+    statusMsg.style.display = 'block';
+
+    const payload = {
+      action: "add",
       id: Date.now(),
       type: currentType,
       name: document.getElementById('donorName').value,
@@ -310,85 +240,63 @@
       date: document.getElementById('entryDate').value,
       mode: currentPayMode,
       handledBy: document.getElementById('handledBy').value,
-      receipt: compressedImageData,
       note: document.getElementById('noteText').value
     };
 
-    let entries = JSON.parse(localStorage.getItem('drive_entries') || '[]');
-    entries.unshift(entry);
-    
     try {
-      localStorage.setItem('drive_entries', JSON.stringify(entries));
+      await fetch(CLOUD_SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+
+      document.getElementById('entryForm').reset();
+      document.getElementById('entryDate').valueAsDate = new Date();
+      statusMsg.style.display = 'none';
+      saveBtn.disabled = false;
+      fetchCloudEntries();
     } catch(err) {
-      alert("Storage quota full! Saving entry without image.");
-      entry.receipt = '';
-      localStorage.setItem('drive_entries', JSON.stringify(entries));
-    }
-
-    // Reset Form safely
-    document.getElementById('entryForm').reset();
-    document.getElementById('imagePreview').style.display = 'none';
-    compressedImageData = '';
-    document.getElementById('entryDate').valueAsDate = new Date();
-
-    renderEntries();
-  }
-
-  function deleteEntry(id) {
-    if (confirm("Delete this entry?")) {
-      let entries = JSON.parse(localStorage.getItem('drive_entries') || '[]');
-      entries = entries.filter(e => e.id !== id);
-      localStorage.setItem('drive_entries', JSON.stringify(entries));
-      renderEntries();
+      alert("Error saving data. Please try again.");
+      statusMsg.style.display = 'none';
+      saveBtn.disabled = false;
     }
   }
 
-  function renderEntries() {
-    const entries = JSON.parse(localStorage.getItem('drive_entries') || '[]');
+  function renderEntries(entries) {
     const container = document.getElementById('entriesList');
     container.innerHTML = '';
 
     let totalCol = 0;
     let totalExp = 0;
 
-    if (entries.length === 0) {
+    if (!entries || entries.length === 0) {
       container.innerHTML = '<div style="text-align:center; color:#a3c2b5; font-size:13px; padding:16px;">No entries logged yet.</div>';
-    }
+    } else {
+      entries.forEach(item => {
+        const amt = parseFloat(item.amount) || 0;
+        if (item.type === 'collection') totalCol += amt;
+        else totalExp += amt;
 
-    entries.forEach(item => {
-      if (item.type === 'collection') totalCol += item.amount;
-      else totalExp += item.amount;
-
-      const card = document.createElement('div');
-      card.className = 'entry-card';
-      card.innerHTML = `
-        <div class="entry-info">
-          <h4>${item.name}</h4>
-          <p>${item.date} • ${item.mode} ${item.handledBy ? '• By: ' + item.handledBy : ''}</p>
-          <span class="entry-badge">${item.type.toUpperCase()}</span>
-        </div>
-        <div class="entry-amount">
-          <div class="val ${item.type === 'collection' ? 'plus' : 'minus'}">
-            ${item.type === 'collection' ? '+' : '-'}Rs. ${item.amount.toLocaleString()}
+        const card = document.createElement('div');
+        card.className = 'entry-card';
+        card.innerHTML = `
+          <div class="entry-info">
+            <h4>${item.name}</h4>
+            <p>${item.date} • ${item.mode} ${item.handledBy ? '• By: ' + item.handledBy : ''}</p>
+            <span class="entry-badge">${String(item.type).toUpperCase()}</span>
           </div>
-          <button type="button" class="del-btn" onclick="deleteEntry(${item.id})">🗑️</button>
-        </div>
-      `;
-      container.appendChild(card);
-    });
+          <div class="entry-amount">
+            <div class="val ${item.type === 'collection' ? 'plus' : 'minus'}">
+              ${item.type === 'collection' ? '+' : '-'}Rs. ${amt.toLocaleString()}
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
 
     document.getElementById('sumCollected').innerText = `Rs. ${totalCol.toLocaleString()}`;
     document.getElementById('sumSpent').innerText = `Rs. ${totalExp.toLocaleString()}`;
     document.getElementById('sumBalance').innerText = `Rs. ${(totalCol - totalExp).toLocaleString()}`;
-  }
-
-  function exportData() {
-    const entries = localStorage.getItem('drive_entries') || '[]';
-    const blob = new Blob([entries], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `ledger-backup-${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
   }
 </script>
 
