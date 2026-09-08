@@ -30,6 +30,11 @@
     .urdu-poetry { font-family: 'Amiri', serif; font-size: 24px; color: #e5c158; line-height: 1.5; }
     .card { background: #113326; border: 1px solid #1e4d3a; border-radius: 14px; padding: 16px; margin-bottom: 16px; }
     
+    /* Friday Filter */
+    .filter-card { display: flex; align-items: center; gap: 10px; background: #113326; border: 1px solid #1e4d3a; border-radius: 14px; padding: 12px 16px; margin-bottom: 16px; }
+    .filter-label { font-size: 13px; font-weight: 700; color: #e5c158; white-space: nowrap; }
+    .filter-select { width: 100%; padding: 10px; background: #081d15; border: 1px solid #235843; border-radius: 8px; color: #fff; font-size: 13px; font-weight: 600; outline: none; cursor: pointer; }
+
     .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
     .sum-box { background: #081d15; border-radius: 10px; padding: 12px 8px; text-align: center; border: 1px solid #1b4535; }
     .sum-box label { font-size: 10px; color: #a3c2b5; font-weight: 700; display: block; margin-bottom: 4px; text-transform: uppercase; }
@@ -85,6 +90,14 @@
   <div id="dashboard" class="dashboard">
     <div class="header-banner">
       <div class="urdu-poetry">اس راہ کے مسافر ہیں، اسی راہ میں ملیں گے</div>
+    </div>
+
+    <!-- FRIDAY EVENT FILTER -->
+    <div class="filter-card">
+      <label class="filter-label">📅 Event / Friday:</label>
+      <select id="fridayFilter" class="filter-select" onchange="onFridayFilterChange()">
+        <option value="ALL">All Time / All Events</option>
+      </select>
     </div>
 
     <!-- SUMMARY -->
@@ -171,6 +184,7 @@
 
   let currentType = 'collection';
   let currentPayMode = 'Online Transfer';
+  let allEntries = [];
 
   document.getElementById('entryDate').valueAsDate = new Date();
 
@@ -216,15 +230,72 @@
     document.getElementById('modeCash').className = 'pay-mode-btn ' + (mode === 'Cash In Hand' ? 'active' : '');
   }
 
+  // Helper: Find the Friday event date associated with any date (Sat to Fri week cycle)
+  function getFridayEventDate(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr + 'T00:00:00');
+    if (isNaN(d.getTime())) return '';
+    
+    const day = d.getDay(); // 0:Sun, 1:Mon, ..., 5:Fri, 6:Sat
+    const diffToFriday = (5 - day + 7) % 7;
+    d.setDate(d.getDate() + diffToFriday);
+    
+    return d.toISOString().split('T')[0];
+  }
+
+  // Populate Friday Filter Dropdown
+  function populateFridayFilter(entries) {
+    const filterSelect = document.getElementById('fridayFilter');
+    const currentVal = filterSelect.value || 'ALL';
+    const fridaySet = new Set();
+
+    // Include upcoming/current Friday
+    const todayFri = getFridayEventDate(new Date().toISOString().split('T')[0]);
+    if (todayFri) fridaySet.add(todayFri);
+
+    entries.forEach(item => {
+      const fri = getFridayEventDate(item.date);
+      if (fri) fridaySet.add(fri);
+    });
+
+    const sortedFridays = Array.from(fridaySet).sort().reverse();
+    filterSelect.innerHTML = '<option value="ALL">All Time / All Events</option>';
+
+    sortedFridays.forEach(friDate => {
+      const d = new Date(friDate + 'T00:00:00');
+      const formatted = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+      
+      const opt = document.createElement('option');
+      opt.value = friDate;
+      opt.innerText = `Friday: ${formatted}`;
+      filterSelect.appendChild(opt);
+    });
+
+    if (Array.from(filterSelect.options).some(o => o.value === currentVal)) {
+      filterSelect.value = currentVal;
+    }
+  }
+
+  function onFridayFilterChange() {
+    const selectedFriday = document.getElementById('fridayFilter').value;
+    if (selectedFriday === 'ALL') {
+      renderEntries(allEntries);
+    } else {
+      const filtered = allEntries.filter(item => getFridayEventDate(item.date) === selectedFriday);
+      renderEntries(filtered);
+    }
+  }
+
   async function fetchCloudEntries() {
     const container = document.getElementById('entriesList');
     container.innerHTML = '<div style="text-align:center; color:#e5c158; padding:12px;">Syncing with Cloud...</div>';
 
     try {
-      // Added Cache-Buster (?t=...) to always fetch real-time fresh data
       const response = await fetch(CLOUD_SCRIPT_URL + "?t=" + Date.now());
       const data = await response.json();
-      renderEntries(data.reverse());
+      allEntries = data.reverse();
+      populateFridayFilter(allEntries);
+      onFridayFilterChange();
     } catch(err) {
       container.innerHTML = '<div style="text-align:center; color:#ff4d4f; padding:12px;">Failed to load data. Check internet connection.</div>';
     }
@@ -280,7 +351,6 @@
       statusMsg.style.display = 'none';
       saveBtn.disabled = false;
       
-      // Wait 1.5 seconds then refresh list to allow sheet processing
       setTimeout(fetchCloudEntries, 1500);
     } catch(err) {
       alert("Error saving data. Please try again.");
@@ -297,7 +367,7 @@
     let totalExp = 0;
 
     if (!entries || entries.length === 0) {
-      container.innerHTML = '<div style="text-align:center; color:#a3c2b5; font-size:13px; padding:16px;">No entries logged yet.</div>';
+      container.innerHTML = '<div style="text-align:center; color:#a3c2b5; font-size:13px; padding:16px;">No entries logged for this selection.</div>';
     } else {
       entries.forEach(item => {
         const amt = parseFloat(item.amount) || 0;
