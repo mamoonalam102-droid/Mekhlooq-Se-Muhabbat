@@ -43,6 +43,12 @@
     .sum-box.spent span { color: #ff4d4f; }
     .sum-box.balance span { color: #e5c158; }
 
+    /* Monthly Report Breakdown */
+    .person-list { margin-top: 12px; }
+    .person-item { background: #081d15; border: 1px solid #1b4535; border-radius: 8px; padding: 10px 12px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .person-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .person-amount { font-size: 13px; font-weight: 700; color: #52c41a; }
+
     .form-title { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 12px; }
     .type-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
     .tab-btn { flex: 1; padding: 10px; background: #081d15; border: 1px solid #235843; border-radius: 8px; color: #a3c2b5; font-weight: 600; font-size: 13px; cursor: pointer; text-align: center; }
@@ -100,7 +106,7 @@
       </select>
     </div>
 
-    <!-- SUMMARY -->
+    <!-- FRIDAY SUMMARY -->
     <div class="card">
       <div class="summary-grid">
         <div class="sum-box collected">
@@ -171,8 +177,41 @@
 
     <!-- DRIVE STREAM -->
     <div class="card">
-      <div class="form-title">Drive Stream (Cloud Synced)</div>
+      <div class="form-title">Drive Stream (Filtered Entries)</div>
       <div id="entriesList">Loading records...</div>
+    </div>
+
+    <!-- MONTHLY REPORT & PERSON BREAKDOWN -->
+    <div class="card">
+      <div class="form-title">📊 Monthly Report & Persons Collected</div>
+      
+      <div class="filter-card" style="margin-bottom: 12px; background: #081d15;">
+        <label class="filter-label">Select Month:</label>
+        <select id="monthFilter" class="filter-select" onchange="renderMonthlyReport()">
+        </select>
+      </div>
+
+      <!-- Monthly Summary Stats -->
+      <div class="summary-grid" style="margin-bottom: 14px;">
+        <div class="sum-box collected">
+          <label>Month Total</label>
+          <span id="mSumCollected">Rs. 0</span>
+        </div>
+        <div class="sum-box spent">
+          <label>Month Spent</label>
+          <span id="mSumSpent">Rs. 0</span>
+        </div>
+        <div class="sum-box balance">
+          <label>Month Balance</label>
+          <span id="mSumBalance">Rs. 0</span>
+        </div>
+      </div>
+
+      <!-- Person-Wise Total Collected List -->
+      <div style="font-size: 13px; font-weight: 700; color: #e5c158; margin-bottom: 6px;">Total Collected Per Person:</div>
+      <div id="personBreakdownList" class="person-list">
+        <!-- Dynamic person list will render here -->
+      </div>
     </div>
 
   </div>
@@ -230,7 +269,7 @@
     document.getElementById('modeCash').className = 'pay-mode-btn ' + (mode === 'Cash In Hand' ? 'active' : '');
   }
 
-  // Helper: Find the Friday event date associated with any date (Sat to Fri week cycle)
+  // Helper: Find Friday event date for any given date
   function getFridayEventDate(dateStr) {
     if (!dateStr) return '';
     const d = new Date(dateStr + 'T00:00:00');
@@ -243,14 +282,12 @@
     return d.toISOString().split('T')[0];
   }
 
-  // Populate Friday Filter Dropdown
+  // Populate Friday Filter Dropdown and DEFAULT to current Friday
   function populateFridayFilter(entries) {
     const filterSelect = document.getElementById('fridayFilter');
-    const currentVal = filterSelect.value || 'ALL';
+    const todayFri = getFridayEventDate(new Date().toISOString().split('T')[0]);
     const fridaySet = new Set();
 
-    // Include upcoming/current Friday
-    const todayFri = getFridayEventDate(new Date().toISOString().split('T')[0]);
     if (todayFri) fridaySet.add(todayFri);
 
     entries.forEach(item => {
@@ -265,15 +302,15 @@
       const d = new Date(friDate + 'T00:00:00');
       const formatted = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
       
+      const isThisFriday = (friDate === todayFri);
       const opt = document.createElement('option');
       opt.value = friDate;
-      opt.innerText = `Friday: ${formatted}`;
+      opt.innerText = (isThisFriday ? "⭐ THIS FRIDAY: " : "Friday: ") + formatted;
       filterSelect.appendChild(opt);
     });
 
-    if (Array.from(filterSelect.options).some(o => o.value === currentVal)) {
-      filterSelect.value = currentVal;
-    }
+    // Automatically set to THIS Friday as default!
+    filterSelect.value = todayFri;
   }
 
   function onFridayFilterChange() {
@@ -286,6 +323,91 @@
     }
   }
 
+  // Populate Month Filter Dropdown
+  function populateMonthFilter(entries) {
+    const monthSelect = document.getElementById('monthFilter');
+    const monthsSet = new Set();
+    
+    // Add current month by default
+    const now = new Date();
+    const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    monthsSet.add(currentMonthKey);
+
+    entries.forEach(item => {
+      if (item.date && item.date.length >= 7) {
+        monthsSet.add(item.date.substring(0, 7)); // YYYY-MM
+      }
+    });
+
+    const sortedMonths = Array.from(monthsSet).sort().reverse();
+    monthSelect.innerHTML = '';
+
+    sortedMonths.forEach(mKey => {
+      const [year, month] = mKey.split('-');
+      const dateObj = new Date(year, month - 1, 1);
+      const monthLabel = dateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      
+      const opt = document.createElement('option');
+      opt.value = mKey;
+      opt.innerText = monthLabel;
+      monthSelect.appendChild(opt);
+    });
+
+    monthSelect.value = currentMonthKey;
+  }
+
+  // Calculate and display Monthly Report and Per-Person Collection Breakdown
+  function renderMonthlyReport() {
+    const monthKey = document.getElementById('monthFilter').value;
+    if (!monthKey) return;
+
+    const monthEntries = allEntries.filter(item => item.date && item.date.startsWith(monthKey));
+
+    let mCol = 0;
+    let mExp = 0;
+    const personTotals = {};
+
+    monthEntries.forEach(item => {
+      const amt = parseFloat(item.amount) || 0;
+      if (item.type === 'collection') {
+        mCol += amt;
+        
+        // Sum total collected per person/donor
+        const pName = (item.name || 'Anonymous').trim();
+        personTotals[pName] = (personTotals[pName] || 0) + amt;
+      } else {
+        mExp += amt;
+      }
+    });
+
+    // Update monthly summary numbers
+    document.getElementById('mSumCollected').innerText = `Rs. ${mCol.toLocaleString()}`;
+    document.getElementById('mSumSpent').innerText = `Rs. ${mExp.toLocaleString()}`;
+    document.getElementById('mSumBalance').innerText = `Rs. ${(mCol - mExp).toLocaleString()}`;
+
+    // Render Person Collection List sorted highest to lowest
+    const personContainer = document.getElementById('personBreakdownList');
+    personContainer.innerHTML = '';
+
+    const sortedPersons = Object.keys(personTotals)
+      .map(name => ({ name, amount: personTotals[name] }))
+      .sort((a, b) => b.amount - a.amount);
+
+    if (sortedPersons.length === 0) {
+      personContainer.innerHTML = '<div style="text-align:center; color:#a3c2b5; font-size:12px; padding:8px;">No collections recorded for this month.</div>';
+    } else {
+      sortedPersons.forEach(p => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'person-item';
+        itemDiv.innerHTML = `
+          <span class="person-name">👤 ${p.name}</span>
+          <span class="person-amount">Rs. ${p.amount.toLocaleString()}</span>
+        `;
+        personContainer.appendChild(itemDiv);
+      });
+    }
+  }
+
   async function fetchCloudEntries() {
     const container = document.getElementById('entriesList');
     container.innerHTML = '<div style="text-align:center; color:#e5c158; padding:12px;">Syncing with Cloud...</div>';
@@ -294,8 +416,13 @@
       const response = await fetch(CLOUD_SCRIPT_URL + "?t=" + Date.now());
       const data = await response.json();
       allEntries = data.reverse();
+      
+      // Setup filters and views
       populateFridayFilter(allEntries);
-      onFridayFilterChange();
+      onFridayFilterChange(); // Automatically renders "This Friday" entries
+      
+      populateMonthFilter(allEntries);
+      renderMonthlyReport(); // Renders current month breakdown
     } catch(err) {
       container.innerHTML = '<div style="text-align:center; color:#ff4d4f; padding:12px;">Failed to load data. Check internet connection.</div>';
     }
