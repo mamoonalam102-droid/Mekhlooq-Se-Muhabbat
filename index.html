@@ -2,326 +2,386 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Mekhlooq Se Muhabbat - Cloud Ledger</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mekhlooq Se Muhabbat cloud ledger — track weekly collections and expenses.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0b251c">
+  <title>Mekhlooq Se Muhabbat — Cloud Ledger</title>
 
-  <!-- Browser Tab Icon & Mobile Home Icon -->
   <link rel="icon" type="image/jpeg" href="./logo.jpeg">
   <link rel="apple-touch-icon" href="./logo.jpeg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
+
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: #0b251c; color: #eaf2ef; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
+    :root {
+      --bg: #0b251c;
+      --surface: #113326;
+      --surface-alt: #081d15;
+      --border: #1e4d3a;
+      --border-alt: #1b4535;
+      --input-border: #235843;
+      --text: #eaf2ef;
+      --text-muted: #a3c2b5;
+      --gold: #e5c158;
+      --green: #52c41a;
+      --red: #ff4d4f;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { color-scheme: dark; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 16px;
+      min-height: 100vh;
+      -webkit-tap-highlight-color: transparent;
+    }
     .app-container { width: 100%; max-width: 480px; margin: 0 auto; }
-    
-    /* Branding Logo Styling */
-    .app-logo {
-      width: 76px;
-      height: 76px;
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+    }
+
+    a:focus-visible, button:focus-visible, input:focus-visible,
+    select:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    /* Branding */
+    .app-logo, .header-logo {
       border-radius: 50%;
-      border: 2px solid #e5c158;
+      border: 2px solid var(--gold);
       object-fit: cover;
       box-shadow: 0 4px 15px rgba(229, 193, 88, 0.25);
       margin: 0 auto 12px auto;
       display: block;
       background: #000;
     }
-    .header-logo {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      border: 2px solid #e5c158;
-      object-fit: cover;
-      box-shadow: 0 4px 12px rgba(229, 193, 88, 0.2);
-      margin: 0 auto 8px auto;
-      display: block;
-      background: #000;
-    }
+    .app-logo { width: 76px; height: 76px; }
+    .header-logo { width: 60px; height: 60px; margin-bottom: 8px; }
 
-    /* Lock Screen */
-    .lock-screen { background: #113326; border: 1px solid #1e4d3a; border-radius: 16px; padding: 28px 20px; text-align: center; margin-top: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-    .lock-screen h1 { color: #e5c158; font-size: 20px; letter-spacing: 1px; margin-bottom: 6px; text-transform: uppercase; }
-    .lock-screen p { color: #a3c2b5; font-size: 13px; margin-bottom: 24px; }
+    /* Lock screen */
+    .lock-screen {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 20px;
+      text-align: center;
+      margin-top: 30px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    .lock-screen h1 { color: var(--gold); font-size: 20px; letter-spacing: 1px; margin-bottom: 6px; text-transform: uppercase; }
+    .lock-screen p { color: var(--text-muted); font-size: 13px; margin-bottom: 24px; }
     .input-wrapper { position: relative; margin-bottom: 16px; }
-    .input-wrapper input { width: 100%; padding: 14px 42px 14px 16px; background: #081d15; border: 1px solid #235843; border-radius: 10px; color: #fff; font-size: 15px; outline: none; }
-    .input-wrapper input:focus { border-color: #e5c158; }
-    .eye-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #a3c2b5; cursor: pointer; font-size: 18px; padding: 4px; }
-    .btn-gold { width: 100%; padding: 14px; background: #e5c158; border: none; border-radius: 10px; color: #0b251c; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; }
+    .input-wrapper input {
+      width: 100%; padding: 14px 42px 14px 16px;
+      background: var(--surface-alt); border: 1px solid var(--input-border); border-radius: 10px;
+      color: #fff; font-size: 15px; outline: none;
+    }
+    .input-wrapper input:focus { border-color: var(--gold); }
+    .eye-btn {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 18px; padding: 4px;
+    }
+    .btn-gold {
+      width: 100%; padding: 14px; background: var(--gold); border: none; border-radius: 10px;
+      color: var(--bg); font-weight: 700; font-size: 15px; cursor: pointer; transition: opacity 0.2s;
+    }
     .btn-gold:disabled { opacity: 0.6; cursor: not-allowed; }
-    .error-msg { color: #ff6b6b; font-size: 13px; margin-top: 12px; display: none; }
+    .error-msg { color: var(--red); font-size: 13px; margin-top: 12px; display: none; }
 
     /* Dashboard */
-    .dashboard { display: none; }
     .header-banner { text-align: center; margin-bottom: 16px; padding: 10px 0; }
-    .urdu-poetry { font-family: 'Amiri', serif; font-size: 24px; color: #e5c158; line-height: 1.5; }
-    .card { background: #113326; border: 1px solid #1e4d3a; border-radius: 14px; padding: 16px; margin-bottom: 16px; }
-    
-    /* Filter Styles */
-    .filter-card { display: flex; align-items: center; gap: 10px; background: #113326; border: 1px solid #1e4d3a; border-radius: 14px; padding: 12px 16px; margin-bottom: 16px; }
-    .filter-label { font-size: 13px; font-weight: 700; color: #e5c158; white-space: nowrap; }
-    .filter-select { width: 100%; padding: 10px; background: #081d15; border: 1px solid #235843; border-radius: 8px; color: #fff; font-size: 13px; font-weight: 600; outline: none; cursor: pointer; }
+    .urdu-poetry { font-family: 'Amiri', serif; font-size: 24px; color: var(--gold); line-height: 1.5; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+    .card h2 { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+    .card h3 { font-size: 13px; font-weight: 700; color: var(--gold); margin-bottom: 6px; }
+
+    /* Filters */
+    .filter-card {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+      padding: 12px 16px; margin-bottom: 16px;
+    }
+    .filter-label { font-size: 13px; font-weight: 700; color: var(--gold); white-space: nowrap; }
+    .filter-select {
+      width: 100%; padding: 10px; background: var(--surface-alt); border: 1px solid var(--input-border);
+      border-radius: 8px; color: #fff; font-size: 13px; font-weight: 600; outline: none; cursor: pointer;
+    }
 
     .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-    .sum-box { background: #081d15; border-radius: 10px; padding: 12px 8px; text-align: center; border: 1px solid #1b4535; }
-    .sum-box label { font-size: 10px; color: #a3c2b5; font-weight: 700; display: block; margin-bottom: 4px; text-transform: uppercase; }
-    .sum-box span { font-size: 13px; font-weight: 700; }
-    .sum-box.collected span { color: #52c41a; }
-    .sum-box.spent span { color: #ff4d4f; }
-    .sum-box.balance span { color: #e5c158; }
+    .sum-box { background: var(--surface-alt); border-radius: 10px; padding: 12px 8px; text-align: center; border: 1px solid var(--border-alt); }
+    .sum-box .box-label { font-size: 10px; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 4px; text-transform: uppercase; }
+    .sum-box .box-value { font-size: 13px; font-weight: 700; }
+    .sum-box.collected .box-value { color: var(--green); }
+    .sum-box.spent .box-value { color: var(--red); }
+    .sum-box.balance .box-value { color: var(--gold); }
 
-    /* Person Breakdown */
-    .person-list { margin-top: 10px; }
-    .person-item { background: #081d15; border: 1px solid #1b4535; border-radius: 8px; padding: 10px 12px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    /* Lists */
+    .person-breakdown { margin-top: 16px; }
+    .person-list, .entries-list { list-style: none; margin-top: 10px; }
+    .person-item {
+      background: var(--surface-alt); border: 1px solid var(--border-alt); border-radius: 8px;
+      padding: 10px 12px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;
+    }
     .person-name { font-size: 13px; font-weight: 600; color: #fff; }
-    .person-amount { font-size: 13px; font-weight: 700; color: #52c41a; }
+    .person-amount { font-size: 13px; font-weight: 700; color: var(--green); }
+    .empty-note { text-align: center; color: var(--text-muted); font-size: 12px; padding: 8px; }
 
-    .form-title { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+    /* Entry form */
     .type-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
-    .tab-btn { flex: 1; padding: 10px; background: #081d15; border: 1px solid #235843; border-radius: 8px; color: #a3c2b5; font-weight: 600; font-size: 13px; cursor: pointer; text-align: center; }
-    .tab-btn.active-collection { background: #1a4d36; border-color: #52c41a; color: #52c41a; }
-    .tab-btn.active-expense { background: #4d1a1a; border-color: #ff4d4f; color: #ff4d4f; }
+    .tab-btn {
+      flex: 1; padding: 10px; background: var(--surface-alt); border: 1px solid var(--input-border); border-radius: 8px;
+      color: var(--text-muted); font-weight: 600; font-size: 13px; cursor: pointer; text-align: center;
+    }
+    .tab-btn.active-collection { background: #1a4d36; border-color: var(--green); color: var(--green); }
+    .tab-btn.active-expense { background: #4d1a1a; border-color: var(--red); color: var(--red); }
 
     .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; font-size: 12px; color: #a3c2b5; margin-bottom: 4px; }
-    .form-group input, .form-group textarea { 
-      width: 100%; 
-      max-width: 100%;
-      background: #081d15; 
-      border: 1px solid #235843; 
-      border-radius: 8px; 
-      padding: 10px 12px; 
-      color: #fff; 
-      font-size: 14px; 
-      outline: none;
-      -webkit-appearance: none;
-      appearance: none;
+    .form-group label, .form-group .group-label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+    .form-group input, .form-group textarea {
+      width: 100%; max-width: 100%;
+      background: var(--surface-alt); border: 1px solid var(--input-border); border-radius: 8px;
+      padding: 10px 12px; color: #fff; font-size: 14px; outline: none;
+      -webkit-appearance: none; appearance: none; font-family: inherit;
     }
-    
-    .pay-mode-btns { display: flex; gap: 8px; }
-    .pay-mode-btn { flex: 1; padding: 8px; background: #081d15; border: 1px solid #235843; border-radius: 8px; color: #a3c2b5; font-size: 12px; cursor: pointer; text-align: center; }
-    .pay-mode-btn.active { border-color: #e5c158; color: #e5c158; background: #1d3d30; font-weight: 600; }
 
-    .entry-card { background: #081d15; border: 1px solid #1b4535; border-radius: 10px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .pay-mode-btns { display: flex; gap: 8px; }
+    .pay-mode-btn {
+      flex: 1; padding: 8px; background: var(--surface-alt); border: 1px solid var(--input-border); border-radius: 8px;
+      color: var(--text-muted); font-size: 12px; cursor: pointer; text-align: center;
+    }
+    .pay-mode-btn.active { border-color: var(--gold); color: var(--gold); background: #1d3d30; font-weight: 600; }
+
+    .entry-card {
+      background: var(--surface-alt); border: 1px solid var(--border-alt); border-radius: 10px;
+      padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+    }
     .entry-info h4 { font-size: 14px; color: #fff; margin-bottom: 2px; }
-    .entry-info p { font-size: 11px; color: #a3c2b5; line-height: 1.4; }
-    .entry-badge { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-top: 4px; background: #e5c158; color: #0b251c; }
+    .entry-info p { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+    .entry-badge {
+      display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+      margin-top: 4px; background: var(--gold); color: var(--bg);
+    }
     .entry-amount { text-align: right; }
     .entry-amount .val { font-size: 15px; font-weight: 700; }
-    .entry-amount .val.plus { color: #52c41a; }
-    .entry-amount .val.minus { color: #ff4d4f; }
-    .status-msg { text-align: center; color: #e5c158; font-size: 12px; margin-top: 8px; display: none; }
+    .entry-amount .val.plus { color: var(--green); }
+    .entry-amount .val.minus { color: var(--red); }
+    .status-msg { text-align: center; color: var(--gold); font-size: 12px; margin-top: 8px; display: none; }
+
+    .footer-note { text-align: center; color: var(--text-muted); font-size: 11px; padding: 12px 0 4px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
   </style>
 </head>
 <body>
 
 <div class="app-container">
-  
+
   <!-- LOCK SCREEN -->
-  <div id="lockScreen" class="lock-screen">
-    <img src="./logo.jpeg" alt="Logo" class="app-logo" onerror="this.style.display='none'">
-    <h1>Mekhlooq Se Muhabbat</h1>
-    <p>Enter passcode !</p>
-    <div class="input-wrapper">
-      <input type="password" id="passcode" placeholder="Passcode" autocomplete="off">
-      <button type="button" class="eye-btn" onclick="togglePassVisibility(event)">👁️</button>
-    </div>
-    <button type="button" class="btn-gold" onclick="unlockLedger()">Unlock Ledger</button>
-    <div id="errorMsg" class="error-msg">Incorrect passcode</div>
-  </div>
+  <section id="lockScreen" class="lock-screen" aria-labelledby="lockTitle">
+    <img src="./logo.jpeg" alt="" class="app-logo" onerror="this.style.display='none'">
+    <h1 id="lockTitle">Mekhlooq Se Muhabbat</h1>
+    <p>Enter passcode to continue</p>
+
+    <form id="lockForm" novalidate>
+      <div class="input-wrapper">
+        <label for="passcode" class="sr-only">Passcode</label>
+        <input type="password" id="passcode" name="passcode" placeholder="Passcode" autocomplete="current-password" required>
+        <button type="button" class="eye-btn" id="toggleVisibilityBtn" aria-label="Show passcode" aria-pressed="false">👁️</button>
+      </div>
+      <button type="submit" class="btn-gold">Unlock Ledger</button>
+      <p id="errorMsg" class="error-msg" role="alert">Incorrect passcode</p>
+    </form>
+  </section>
 
   <!-- DASHBOARD -->
-  <div id="dashboard" class="dashboard">
-    <div class="header-banner">
-      <img src="./logo.jpeg" alt="Logo" class="header-logo" onerror="this.style.display='none'">
-      <div class="urdu-poetry">اس راہ کے مسافر ہیں، اسی راہ میں ملیں گے</div>
-    </div>
+  <div id="dashboard" class="dashboard" hidden>
+    <h1 class="sr-only">Mekhlooq Se Muhabbat — Cloud Ledger</h1>
 
-    <!-- FRIDAY/WEEK FILTER -->
-    <div class="filter-card">
-      <label class="filter-label">📅 Select Friday:</label>
-      <select id="fridayFilter" class="filter-select" onchange="onFridayFilterChange()">
-        <option value="ALL">All Time </option>
-      </select>
-    </div>
+    <header class="header-banner">
+      <img src="./logo.jpeg" alt="" class="header-logo" onerror="this.style.display='none'">
+      <p class="urdu-poetry" lang="ur" dir="rtl">اس راہ کے مسافر ہیں، اسی راہ میں ملیں گے</p>
+    </header>
 
-    <!-- WEEKLY BUDGET SUMMARY -->
-    <div class="card">
-      <div class="form-title" id="weekBudgetTitle">Budget Summary</div>
-      <div class="summary-grid">
-        <div class="sum-box collected">
-          <label>Collected</label>
-          <span id="sumCollected">Rs. 0</span>
-        </div>
-        <div class="sum-box spent">
-          <label>Spent</label>
-          <span id="sumSpent">Rs. 0</span>
-        </div>
-        <div class="sum-box balance">
-          <label>Net Balance</label>
-          <span id="sumBalance">Rs. 0</span>
-        </div>
-      </div>
+    <main>
+      <!-- FRIDAY / WEEK FILTER -->
+      <section class="filter-card">
+        <label for="fridayFilter" class="filter-label">📅 Select Friday:</label>
+        <select id="fridayFilter" class="filter-select">
+          <option value="ALL">All Time</option>
+        </select>
+      </section>
 
-      <!-- THIS WEEK MEMBER BREAKDOWN -->
-      <div style="margin-top: 16px;">
-        <div style="font-size: 13px; font-weight: 700; color: #e5c158; margin-bottom: 6px;">👥 Members Collection This Week:</div>
-        <div id="weeklyPersonList" class="person-list"></div>
-      </div>
-    </div>
-
-    <!-- LOG NEW ENTRY -->
-    <div class="card">
-      <div class="form-title">Log New Entry</div>
-      <div class="type-tabs">
-        <div id="tabCollection" class="tab-btn active-collection" onclick="setEntryType('collection')">+ Collection</div>
-        <div id="tabExpense" class="tab-btn" onclick="setEntryType('expense')">- Expense</div>
-      </div>
-
-      <form id="entryForm" onsubmit="saveEntry(event)">
-        <div class="form-group">
-          <label id="nameLabel">Name *</label>
-          <input type="text" id="donorName" required placeholder="e.g., Ali">
-        </div>
-
-        <div class="form-group">
-          <label>Amount (PKR) *</label>
-          <input type="number" id="amount" required placeholder="0">
-        </div>
-
-        <div class="form-group">
-          <label>Date *</label>
-          <input type="date" id="entryDate" required>
-        </div>
-
-        <div class="form-group">
-          <div class="pay-mode-btns">
-            <div id="modeOnline" class="pay-mode-btn active" onclick="setPayMode('Online Transfer')">Online Transfer</div>
-            <div id="modeCash" class="pay-mode-btn" onclick="setPayMode('Cash In Hand')">Cash In Hand</div>
+      <!-- WEEKLY BUDGET SUMMARY -->
+      <section class="card" aria-labelledby="weekBudgetTitle">
+        <h2 id="weekBudgetTitle">Budget Summary</h2>
+        <div class="summary-grid" role="group" aria-label="Weekly totals">
+          <div class="sum-box collected">
+            <span class="box-label">Collected</span>
+            <span id="sumCollected" class="box-value">Rs. 0</span>
+          </div>
+          <div class="sum-box spent">
+            <span class="box-label">Spent</span>
+            <span id="sumSpent" class="box-value">Rs. 0</span>
+          </div>
+          <div class="sum-box balance">
+            <span class="box-label">Net Balance</span>
+            <span id="sumBalance" class="box-value">Rs. 0</span>
           </div>
         </div>
 
-        <div class="form-group">
-          <label>Note</label>
-          <textarea id="noteText" rows="2" placeholder="Additional details..."></textarea>
+        <div class="person-breakdown">
+          <h3>👥 Members Collection This Week</h3>
+          <ul id="weeklyPersonList" class="person-list" aria-live="polite"></ul>
+        </div>
+      </section>
+
+      <!-- LOG NEW ENTRY -->
+      <section class="card" aria-labelledby="logEntryTitle">
+        <h2 id="logEntryTitle">Log New Entry</h2>
+
+        <div class="type-tabs" role="tablist" aria-label="Entry type">
+          <button type="button" id="tabCollection" class="tab-btn active-collection" role="tab" aria-selected="true">+ Collection</button>
+          <button type="button" id="tabExpense" class="tab-btn" role="tab" aria-selected="false">− Expense</button>
         </div>
 
-        <button type="submit" id="saveBtn" class="btn-gold">Save Entry to Cloud</button>
-        <div id="statusMsg" class="status-msg">Saving entry instantly...</div>
-      </form>
-    </div>
+        <form id="entryForm" novalidate>
+          <div class="form-group">
+            <label id="nameLabel" for="donorName">Name *</label>
+            <input type="text" id="donorName" name="donorName" required placeholder="e.g., Ali">
+          </div>
 
-    <!-- ACTIVITY STREAM -->
-    <div class="card">
-      <div class="form-title">Activity Stream</div>
-      <div id="entriesList">Loading records...</div>
-    </div>
+          <div class="form-group">
+            <label for="amount">Amount (PKR) *</label>
+            <input type="number" id="amount" name="amount" min="0" step="0.01" inputmode="decimal" required placeholder="0">
+          </div>
 
-    <!-- MONTHLY REPORT & PERSON BREAKDOWN -->
-    <div class="card">
-      <div class="form-title">📊 Monthly Report & All Contributors</div>
-      
-      <div class="filter-card" style="margin-bottom: 12px; background: #081d15;">
-        <label class="filter-label">Select Month:</label>
-        <select id="monthFilter" class="filter-select" onchange="renderMonthlyReport()"></select>
-      </div>
+          <div class="form-group">
+            <label for="entryDate">Date *</label>
+            <input type="date" id="entryDate" name="entryDate" required>
+          </div>
 
-      <div class="summary-grid" style="margin-bottom: 14px;">
-        <div class="sum-box collected">
-          <label>Month Total</label>
-          <span id="mSumCollected">Rs. 0</span>
+          <div class="form-group">
+            <span id="payModeLabel" class="group-label">Payment Mode</span>
+            <div class="pay-mode-btns" role="radiogroup" aria-labelledby="payModeLabel">
+              <button type="button" id="modeOnline" class="pay-mode-btn active" role="radio" aria-checked="true">Online Transfer</button>
+              <button type="button" id="modeCash" class="pay-mode-btn" role="radio" aria-checked="false">Cash In Hand</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="noteText">Note</label>
+            <textarea id="noteText" name="noteText" rows="2" placeholder="Additional details..."></textarea>
+          </div>
+
+          <button type="submit" id="saveBtn" class="btn-gold">Save Entry to Cloud</button>
+          <p id="statusMsg" class="status-msg" role="status" aria-live="polite">Saving entry instantly...</p>
+        </form>
+      </section>
+
+      <!-- ACTIVITY STREAM -->
+      <section class="card" aria-labelledby="activityTitle">
+        <h2 id="activityTitle">Activity Stream</h2>
+        <ul id="entriesList" class="entries-list" aria-live="polite">
+          <li class="empty-note">Loading records…</li>
+        </ul>
+      </section>
+
+      <!-- MONTHLY REPORT & PERSON BREAKDOWN -->
+      <section class="card" aria-labelledby="monthlyReportTitle">
+        <h2 id="monthlyReportTitle">📊 Monthly Report &amp; All Contributors</h2>
+
+        <div class="filter-card" style="margin-bottom: 12px; background: var(--surface-alt);">
+          <label for="monthFilter" class="filter-label">Select Month:</label>
+          <select id="monthFilter" class="filter-select"></select>
         </div>
-        <div class="sum-box spent">
-          <label>Month Spent</label>
-          <span id="mSumSpent">Rs. 0</span>
-        </div>
-        <div class="sum-box balance">
-          <label>Month Balance</label>
-          <span id="mSumBalance">Rs. 0</span>
-        </div>
-      </div>
 
-      <div style="font-size: 13px; font-weight: 700; color: #e5c158; margin-bottom: 6px;">Total Collected Per Person (Month):</div>
-      <div id="personBreakdownList" class="person-list"></div>
-    </div>
+        <div class="summary-grid" role="group" aria-label="Monthly totals" style="margin-bottom: 14px;">
+          <div class="sum-box collected">
+            <span class="box-label">Month Total</span>
+            <span id="mSumCollected" class="box-value">Rs. 0</span>
+          </div>
+          <div class="sum-box spent">
+            <span class="box-label">Month Spent</span>
+            <span id="mSumSpent" class="box-value">Rs. 0</span>
+          </div>
+          <div class="sum-box balance">
+            <span class="box-label">Month Balance</span>
+            <span id="mSumBalance" class="box-value">Rs. 0</span>
+          </div>
+        </div>
 
+        <h3>Total Collected Per Person (Month)</h3>
+        <ul id="personBreakdownList" class="person-list" aria-live="polite"></ul>
+      </section>
+    </main>
+
+    <footer>
+      <p class="footer-note">Mekhlooq Se Muhabbat — Cloud Ledger</p>
+    </footer>
   </div>
-
 </div>
 
 <script>
+(function () {
+  'use strict';
+
   const CLOUD_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWlGiiPu7XvBKO9xWu_5fWVzBSBhRJEtBllA9_oqVHa1b9QUJzRfu-llg4-bS8D_KW/exec";
+  const STORAGE_KEY_UNLOCKED = 'isUnlocked';
+  const STORAGE_KEY_ENTRIES = 'cached_msm_entries_pure';
 
   let currentType = 'collection';
   let currentPayMode = 'Online Transfer';
   let allEntries = [];
+
+  // Cached DOM references
+  const el = {
+    lockScreen: document.getElementById('lockScreen'),
+    lockForm: document.getElementById('lockForm'),
+    passcode: document.getElementById('passcode'),
+    errorMsg: document.getElementById('errorMsg'),
+    toggleVisibilityBtn: document.getElementById('toggleVisibilityBtn'),
+    dashboard: document.getElementById('dashboard'),
+    fridayFilter: document.getElementById('fridayFilter'),
+    weekBudgetTitle: document.getElementById('weekBudgetTitle'),
+    sumCollected: document.getElementById('sumCollected'),
+    sumSpent: document.getElementById('sumSpent'),
+    sumBalance: document.getElementById('sumBalance'),
+    weeklyPersonList: document.getElementById('weeklyPersonList'),
+    tabCollection: document.getElementById('tabCollection'),
+    tabExpense: document.getElementById('tabExpense'),
+    nameLabel: document.getElementById('nameLabel'),
+    donorName: document.getElementById('donorName'),
+    amount: document.getElementById('amount'),
+    entryDate: document.getElementById('entryDate'),
+    modeOnline: document.getElementById('modeOnline'),
+    modeCash: document.getElementById('modeCash'),
+    noteText: document.getElementById('noteText'),
+    entryForm: document.getElementById('entryForm'),
+    saveBtn: document.getElementById('saveBtn'),
+    statusMsg: document.getElementById('statusMsg'),
+    entriesList: document.getElementById('entriesList'),
+    monthFilter: document.getElementById('monthFilter'),
+    mSumCollected: document.getElementById('mSumCollected'),
+    mSumSpent: document.getElementById('mSumSpent'),
+    mSumBalance: document.getElementById('mSumBalance'),
+    personBreakdownList: document.getElementById('personBreakdownList')
+  };
 
   function getLocalDateStr(d = new Date()) {
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
-  }
-
-  document.getElementById('entryDate').value = getLocalDateStr();
-
-  if (localStorage.getItem('isUnlocked') === 'true') {
-    showDashboard();
-  }
-
-  function togglePassVisibility(e) {
-    if (e) e.preventDefault();
-    const input = document.getElementById('passcode');
-    const val = input.value;
-    input.type = input.type === 'password' ? 'text' : 'password';
-    input.value = val;
-  }
-
-  function unlockLedger() {
-    const val = document.getElementById('passcode').value.trim().toLowerCase();
-    if (val === 'langarkahissa') {
-      localStorage.setItem('isUnlocked', 'true');
-      showDashboard();
-    } else {
-      document.getElementById('errorMsg').style.display = 'block';
-    }
-  }
-
-  function showDashboard() {
-    document.getElementById('lockScreen').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-
-    try {
-      const cached = localStorage.getItem('cached_msm_entries_pure');
-      if (cached) {
-        allEntries = JSON.parse(cached);
-        populateFridayFilter(allEntries);
-        onFridayFilterChange();
-        populateMonthFilter(allEntries);
-        renderMonthlyReport();
-      }
-    } catch (e) {
-      console.warn(e);
-    }
-
-    fetchCloudEntries();
-  }
-
-  function setEntryType(type) {
-    currentType = type;
-    document.getElementById('tabCollection').className = 'tab-btn ' + (type === 'collection' ? 'active-collection' : '');
-    document.getElementById('tabExpense').className = 'tab-btn ' + (type === 'expense' ? 'active-expense' : '');
-    document.getElementById('saveBtn').innerText = type === 'collection' ? 'Save Collection to Cloud' : 'Save Expense to Cloud';
-    document.getElementById('nameLabel').innerText = type === 'collection' ? 'Name *' : 'Expense Title / Detail *';
-  }
-
-  function setPayMode(mode) {
-    currentPayMode = mode;
-    document.getElementById('modeOnline').className = 'pay-mode-btn ' + (mode === 'Online Transfer' ? 'active' : '');
-    document.getElementById('modeCash').className = 'pay-mode-btn ' + (mode === 'Cash In Hand' ? 'active' : '');
   }
 
   function parseLocalDate(dateStr) {
@@ -341,7 +401,7 @@
 
     const parsedD = parseLocalDate(rawDate);
     const datePart = parsedD ? parsedD.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : rawDate;
-    
+
     if (rawId && !isNaN(Number(rawId))) {
       const idDate = new Date(Number(rawId));
       if (!isNaN(idDate.getTime())) {
@@ -355,7 +415,6 @@
   function getFridayEventDate(dateStr) {
     const d = parseLocalDate(dateStr);
     if (!d || isNaN(d.getTime())) return '';
-    
     const day = d.getDay();
     const diffToFriday = (5 - day + 7) % 7;
     d.setDate(d.getDate() + diffToFriday);
@@ -365,69 +424,158 @@
   function getFridayOrdinalLabel(friDateStr) {
     const d = parseLocalDate(friDateStr);
     if (!d) return friDateStr;
-
     const dayOfMonth = d.getDate();
     const fridayIndex = Math.ceil(dayOfMonth / 7);
-
     const ordinals = ["1st", "2nd", "3rd", "4th", "5th"];
     const ordText = ordinals[fridayIndex - 1] || `${fridayIndex}th`;
     const monthName = d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-
     return `${ordText} Friday (${monthName})`;
   }
 
+  // ---------- Lock screen ----------
+
+  function togglePassVisibility() {
+    const isHidden = el.passcode.type === 'password';
+    el.passcode.type = isHidden ? 'text' : 'password';
+    el.toggleVisibilityBtn.setAttribute('aria-pressed', String(isHidden));
+    el.toggleVisibilityBtn.setAttribute('aria-label', isHidden ? 'Hide passcode' : 'Show passcode');
+  }
+
+  function unlockLedger(e) {
+    e.preventDefault();
+    const val = el.passcode.value.trim().toLowerCase();
+    if (val === 'langarkahissa') {
+      localStorage.setItem(STORAGE_KEY_UNLOCKED, 'true');
+      showDashboard();
+    } else {
+      el.errorMsg.style.display = 'block';
+    }
+  }
+
+  function showDashboard() {
+    el.lockScreen.style.display = 'none';
+    el.dashboard.hidden = false;
+
+    try {
+      const cached = localStorage.getItem(STORAGE_KEY_ENTRIES);
+      if (cached) {
+        allEntries = JSON.parse(cached);
+        populateFridayFilter(allEntries);
+        onFridayFilterChange();
+        populateMonthFilter(allEntries);
+        renderMonthlyReport();
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+
+    fetchCloudEntries();
+  }
+
+  // ---------- Entry type / pay mode toggles ----------
+
+  function setEntryType(type) {
+    currentType = type;
+    const isCollection = type === 'collection';
+
+    el.tabCollection.className = 'tab-btn ' + (isCollection ? 'active-collection' : '');
+    el.tabExpense.className = 'tab-btn ' + (!isCollection ? 'active-expense' : '');
+    el.tabCollection.setAttribute('aria-selected', String(isCollection));
+    el.tabExpense.setAttribute('aria-selected', String(!isCollection));
+
+    el.saveBtn.innerText = isCollection ? 'Save Collection to Cloud' : 'Save Expense to Cloud';
+    el.nameLabel.innerText = isCollection ? 'Name *' : 'Expense Title / Detail *';
+  }
+
+  function setPayMode(mode) {
+    currentPayMode = mode;
+    const isOnline = mode === 'Online Transfer';
+
+    el.modeOnline.className = 'pay-mode-btn ' + (isOnline ? 'active' : '');
+    el.modeCash.className = 'pay-mode-btn ' + (!isOnline ? 'active' : '');
+    el.modeOnline.setAttribute('aria-checked', String(isOnline));
+    el.modeCash.setAttribute('aria-checked', String(!isOnline));
+  }
+
+  // ---------- Filters ----------
+
   function populateFridayFilter(entries) {
-    const filterSelect = document.getElementById('fridayFilter');
-    const currentVal = filterSelect.value;
+    const currentVal = el.fridayFilter.value;
     const todayFri = getFridayEventDate(getLocalDateStr(new Date()));
     const fridaySet = new Set();
 
     if (todayFri) fridaySet.add(todayFri);
-
     entries.forEach(item => {
       const fri = getFridayEventDate(item.date);
       if (fri) fridaySet.add(fri);
     });
 
     const sortedFridays = Array.from(fridaySet).sort().reverse();
-    filterSelect.innerHTML = '<option value="ALL">All Time / All Events</option>';
+    el.fridayFilter.innerHTML = '<option value="ALL">All Time / All Events</option>';
 
     sortedFridays.forEach(friDate => {
       const label = getFridayOrdinalLabel(friDate);
       const isThisFriday = (friDate === todayFri);
-      
       const opt = document.createElement('option');
       opt.value = friDate;
       opt.innerText = (isThisFriday ? "⭐ THIS WEEK: " : "") + label;
-      filterSelect.appendChild(opt);
+      el.fridayFilter.appendChild(opt);
     });
 
-    filterSelect.value = (currentVal && currentVal !== 'ALL') ? currentVal : todayFri;
+    el.fridayFilter.value = (currentVal && currentVal !== 'ALL') ? currentVal : todayFri;
   }
 
   function onFridayFilterChange() {
-    const selectedFriday = document.getElementById('fridayFilter').value;
-    const titleEl = document.getElementById('weekBudgetTitle');
-    
+    const selectedFriday = el.fridayFilter.value;
     let filtered;
+
     if (selectedFriday === 'ALL') {
       filtered = allEntries;
-      titleEl.innerText = "Budget Summary (All Time)";
+      el.weekBudgetTitle.innerText = "Budget Summary (All Time)";
     } else {
       filtered = allEntries.filter(item => getFridayEventDate(item.date) === selectedFriday);
-      const friLabel = getFridayOrdinalLabel(selectedFriday);
-      titleEl.innerText = `Budget Summary for ${friLabel}`;
+      el.weekBudgetTitle.innerText = `Budget Summary for ${getFridayOrdinalLabel(selectedFriday)}`;
     }
 
     renderEntries(filtered);
-    renderWeeklyBreakdown(filtered);
+    renderPersonList(el.weeklyPersonList, filtered, 'No member collections for this period.');
   }
 
-  function renderWeeklyBreakdown(entries) {
-    const container = document.getElementById('weeklyPersonList');
-    container.innerHTML = '';
+  function populateMonthFilter(entries) {
+    const currentVal = el.monthFilter.value;
+    const monthsSet = new Set();
 
+    const now = new Date();
+    const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    monthsSet.add(currentMonthKey);
+
+    entries.forEach(item => {
+      if (item.date && String(item.date).length >= 7) {
+        monthsSet.add(String(item.date).substring(0, 7));
+      }
+    });
+
+    const sortedMonths = Array.from(monthsSet).sort().reverse();
+    el.monthFilter.innerHTML = '';
+
+    sortedMonths.forEach(mKey => {
+      const [year, month] = mKey.split('-');
+      const dateObj = new Date(parseInt(year), parseInt(month) - 1, 1);
+      const opt = document.createElement('option');
+      opt.value = mKey;
+      opt.innerText = dateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      el.monthFilter.appendChild(opt);
+    });
+
+    el.monthFilter.value = currentVal || currentMonthKey;
+  }
+
+  // ---------- Rendering ----------
+
+  function renderPersonList(container, entries, emptyText) {
+    container.innerHTML = '';
     const personTotals = {};
+
     entries.forEach(item => {
       if (item.type === 'collection') {
         const amt = parseFloat(item.amount) || 0;
@@ -441,142 +589,126 @@
       .sort((a, b) => b.amount - a.amount);
 
     if (sortedPersons.length === 0) {
-      container.innerHTML = '<div style="text-align:center; color:#a3c2b5; font-size:12px; padding:6px;">No member collections for this period.</div>';
-    } else {
-      sortedPersons.forEach(p => {
-        const div = document.createElement('div');
-        div.className = 'person-item';
-        div.innerHTML = `
-          <span class="person-name">👤 ${p.name}</span>
-          <span class="person-amount">Rs. ${p.amount.toLocaleString()}</span>
-        `;
-        container.appendChild(div);
-      });
+      container.innerHTML = `<li class="empty-note">${emptyText}</li>`;
+      return;
     }
-  }
 
-  function populateMonthFilter(entries) {
-    const monthSelect = document.getElementById('monthFilter');
-    const currentVal = monthSelect.value;
-    const monthsSet = new Set();
-    
-    const now = new Date();
-    const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    monthsSet.add(currentMonthKey);
-
-    entries.forEach(item => {
-      if (item.date && String(item.date).length >= 7) {
-        monthsSet.add(String(item.date).substring(0, 7));
-      }
+    sortedPersons.forEach(p => {
+      const li = document.createElement('li');
+      li.className = 'person-item';
+      li.innerHTML = `
+        <span class="person-name"><span aria-hidden="true">👤</span> ${escapeHtml(p.name)}</span>
+        <span class="person-amount">Rs. ${p.amount.toLocaleString()}</span>
+      `;
+      container.appendChild(li);
     });
-
-    const sortedMonths = Array.from(monthsSet).sort().reverse();
-    monthSelect.innerHTML = '';
-
-    sortedMonths.forEach(mKey => {
-      const [year, month] = mKey.split('-');
-      const dateObj = new Date(parseInt(year), parseInt(month) - 1, 1);
-      const monthLabel = dateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-      
-      const opt = document.createElement('option');
-      opt.value = mKey;
-      opt.innerText = monthLabel;
-      monthSelect.appendChild(opt);
-    });
-
-    monthSelect.value = currentVal || currentMonthKey;
   }
 
   function renderMonthlyReport() {
-    const monthKey = document.getElementById('monthFilter').value;
+    const monthKey = el.monthFilter.value;
     if (!monthKey) return;
 
     const monthEntries = allEntries.filter(item => item.date && String(item.date).startsWith(monthKey));
 
     let mCol = 0;
     let mExp = 0;
-    const personTotals = {};
-
     monthEntries.forEach(item => {
       const amt = parseFloat(item.amount) || 0;
-      if (item.type === 'collection') {
-        mCol += amt;
-        const pName = (item.name || 'Anonymous').trim();
-        personTotals[pName] = (personTotals[pName] || 0) + amt;
-      } else {
-        mExp += amt;
-      }
+      if (item.type === 'collection') mCol += amt;
+      else mExp += amt;
     });
 
-    document.getElementById('mSumCollected').innerText = `Rs. ${mCol.toLocaleString()}`;
-    document.getElementById('mSumSpent').innerText = `Rs. ${mExp.toLocaleString()}`;
-    document.getElementById('mSumBalance').innerText = `Rs. ${(mCol - mExp).toLocaleString()}`;
+    el.mSumCollected.innerText = `Rs. ${mCol.toLocaleString()}`;
+    el.mSumSpent.innerText = `Rs. ${mExp.toLocaleString()}`;
+    el.mSumBalance.innerText = `Rs. ${(mCol - mExp).toLocaleString()}`;
 
-    const personContainer = document.getElementById('personBreakdownList');
-    personContainer.innerHTML = '';
-
-    const sortedPersons = Object.keys(personTotals)
-      .map(name => ({ name, amount: personTotals[name] }))
-      .sort((a, b) => b.amount - a.amount);
-
-    if (sortedPersons.length === 0) {
-      personContainer.innerHTML = '<div style="text-align:center; color:#a3c2b5; font-size:12px; padding:8px;">No collections recorded for this month.</div>';
-    } else {
-      sortedPersons.forEach(p => {
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'person-item';
-        itemDiv.innerHTML = `
-          <span class="person-name">👤 ${p.name}</span>
-          <span class="person-amount">Rs. ${p.amount.toLocaleString()}</span>
-        `;
-        personContainer.appendChild(itemDiv);
-      });
-    }
+    renderPersonList(el.personBreakdownList, monthEntries, 'No collections recorded for this month.');
   }
 
+  function renderEntries(entries) {
+    el.entriesList.innerHTML = '';
+    let totalCol = 0;
+    let totalExp = 0;
+
+    if (!entries || entries.length === 0) {
+      el.entriesList.innerHTML = '<li class="empty-note">No entries logged for this selection.</li>';
+    } else {
+      entries.forEach(item => {
+        const amt = parseFloat(item.amount) || 0;
+        if (item.type === 'collection') totalCol += amt;
+        else totalExp += amt;
+
+        const neatDateTime = formatNeatDateTime(item.date, item.id);
+        const isCollection = item.type === 'collection';
+
+        const li = document.createElement('li');
+        li.className = 'entry-card';
+        li.innerHTML = `
+          <div class="entry-info">
+            <h4>${escapeHtml(item.name)}</h4>
+            <p>${neatDateTime} • ${escapeHtml(item.mode || '')}</p>
+            <span class="entry-badge">${escapeHtml(String(item.type).toUpperCase())}</span>
+          </div>
+          <div class="entry-amount">
+            <div class="val ${isCollection ? 'plus' : 'minus'}">
+              ${isCollection ? '+' : '−'}Rs. ${amt.toLocaleString()}
+            </div>
+          </div>
+        `;
+        el.entriesList.appendChild(li);
+      });
+    }
+
+    el.sumCollected.innerText = `Rs. ${totalCol.toLocaleString()}`;
+    el.sumSpent.innerText = `Rs. ${totalExp.toLocaleString()}`;
+    el.sumBalance.innerText = `Rs. ${(totalCol - totalExp).toLocaleString()}`;
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+
+  // ---------- Cloud sync ----------
+
   async function fetchCloudEntries() {
-    const container = document.getElementById('entriesList');
     if (allEntries.length === 0) {
-      container.innerHTML = '<div style="text-align:center; color:#e5c158; padding:12px;">Syncing with Cloud...</div>';
+      el.entriesList.innerHTML = '<li class="empty-note">Syncing with cloud…</li>';
     }
 
     try {
       const response = await fetch(CLOUD_SCRIPT_URL + "?t=" + Date.now());
       const data = await response.json();
       allEntries = data.reverse();
-      
-      localStorage.setItem('cached_msm_entries_pure', JSON.stringify(allEntries));
+
+      localStorage.setItem(STORAGE_KEY_ENTRIES, JSON.stringify(allEntries));
 
       populateFridayFilter(allEntries);
       onFridayFilterChange();
-      
       populateMonthFilter(allEntries);
       renderMonthlyReport();
-    } catch(err) {
+    } catch (err) {
       if (allEntries.length === 0) {
-        container.innerHTML = '<div style="text-align:center; color:#ff4d4f; padding:12px;">Failed to load data. Check internet connection.</div>';
+        el.entriesList.innerHTML = '<li class="empty-note" style="color: var(--red);">Failed to load data. Check your internet connection.</li>';
       }
     }
   }
 
   async function saveEntry(e) {
     e.preventDefault();
-    const saveBtn = document.getElementById('saveBtn');
-    const statusMsg = document.getElementById('statusMsg');
+    el.saveBtn.disabled = true;
+    el.statusMsg.style.display = 'block';
 
-    saveBtn.disabled = true;
-    statusMsg.style.display = 'block';
-
-    const newId = Date.now();
     const payload = {
       action: "add",
-      id: newId,
+      id: Date.now(),
       type: currentType,
-      name: document.getElementById('donorName').value,
-      amount: parseFloat(document.getElementById('amount').value),
-      date: document.getElementById('entryDate').value,
+      name: el.donorName.value,
+      amount: parseFloat(el.amount.value),
+      date: el.entryDate.value,
       mode: currentPayMode,
-      note: document.getElementById('noteText').value
+      note: el.noteText.value
     };
 
     allEntries.unshift(payload);
@@ -590,58 +722,43 @@
         body: JSON.stringify(payload)
       });
 
-      document.getElementById('entryForm').reset();
-      document.getElementById('entryDate').value = getLocalDateStr();
-      statusMsg.style.display = 'none';
-      saveBtn.disabled = false;
-      
+      el.entryForm.reset();
+      el.entryDate.value = getLocalDateStr();
+      el.statusMsg.style.display = 'none';
+      el.saveBtn.disabled = false;
+
       fetchCloudEntries();
-    } catch(err) {
-      alert("Error saving data. Please try again.");
-      statusMsg.style.display = 'none';
-      saveBtn.disabled = false;
+    } catch (err) {
+      window.alert("Error saving data. Please try again.");
+      el.statusMsg.style.display = 'none';
+      el.saveBtn.disabled = false;
     }
   }
 
-  function renderEntries(entries) {
-    const container = document.getElementById('entriesList');
-    container.innerHTML = '';
+  // ---------- Init ----------
 
-    let totalCol = 0;
-    let totalExp = 0;
+  function init() {
+    el.entryDate.value = getLocalDateStr();
 
-    if (!entries || entries.length === 0) {
-      container.innerHTML = '<div style="text-align:center; color:#a3c2b5; font-size:13px; padding:16px;">No entries logged for this selection.</div>';
-    } else {
-      entries.forEach(item => {
-        const amt = parseFloat(item.amount) || 0;
-        if (item.type === 'collection') totalCol += amt;
-        else totalExp += amt;
+    el.lockForm.addEventListener('submit', unlockLedger);
+    el.toggleVisibilityBtn.addEventListener('click', togglePassVisibility);
 
-        const neatDateTime = formatNeatDateTime(item.date, item.id);
+    el.tabCollection.addEventListener('click', () => setEntryType('collection'));
+    el.tabExpense.addEventListener('click', () => setEntryType('expense'));
+    el.modeOnline.addEventListener('click', () => setPayMode('Online Transfer'));
+    el.modeCash.addEventListener('click', () => setPayMode('Cash In Hand'));
 
-        const card = document.createElement('div');
-        card.className = 'entry-card';
-        card.innerHTML = `
-          <div class="entry-info">
-            <h4>${item.name}</h4>
-            <p>${neatDateTime} • ${item.mode}</p>
-            <span class="entry-badge">${String(item.type).toUpperCase()}</span>
-          </div>
-          <div class="entry-amount">
-            <div class="val ${item.type === 'collection' ? 'plus' : 'minus'}">
-              ${item.type === 'collection' ? '+' : '-'}Rs. ${amt.toLocaleString()}
-            </div>
-          </div>
-        `;
-        container.appendChild(card);
-      });
+    el.fridayFilter.addEventListener('change', onFridayFilterChange);
+    el.monthFilter.addEventListener('change', renderMonthlyReport);
+    el.entryForm.addEventListener('submit', saveEntry);
+
+    if (localStorage.getItem(STORAGE_KEY_UNLOCKED) === 'true') {
+      showDashboard();
     }
-
-    document.getElementById('sumCollected').innerText = `Rs. ${totalCol.toLocaleString()}`;
-    document.getElementById('sumSpent').innerText = `Rs. ${totalExp.toLocaleString()}`;
-    document.getElementById('sumBalance').innerText = `Rs. ${(totalCol - totalExp).toLocaleString()}`;
   }
+
+  init();
+})();
 </script>
 
 </body>
