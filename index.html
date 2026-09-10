@@ -87,8 +87,19 @@
 
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; font-size: 12px; color: #a3c2b5; margin-bottom: 4px; }
-    .form-group input, .form-group textarea { width: 100%; background: #081d15; border: 1px solid #235843; border-radius: 8px; padding: 10px 12px; color: #fff; font-size: 14px; outline: none; }
-    .file-input { width: 100%; padding: 8px; background: #081d15; border: 1px solid #235843; border-radius: 8px; color: #a3c2b5; font-size: 13px; cursor: pointer; }
+    .form-group input, .form-group textarea { 
+      width: 100%; 
+      max-width: 100%;
+      background: #081d15; 
+      border: 1px solid #235843; 
+      border-radius: 8px; 
+      padding: 10px 12px; 
+      color: #fff; 
+      font-size: 14px; 
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
     
     .pay-mode-btns { display: flex; gap: 8px; }
     .pay-mode-btn { flex: 1; padding: 8px; background: #081d15; border: 1px solid #235843; border-radius: 8px; color: #a3c2b5; font-size: 12px; cursor: pointer; text-align: center; }
@@ -98,7 +109,6 @@
     .entry-info h4 { font-size: 14px; color: #fff; margin-bottom: 2px; }
     .entry-info p { font-size: 11px; color: #a3c2b5; line-height: 1.4; }
     .entry-badge { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-top: 4px; background: #e5c158; color: #0b251c; }
-    .receipt-link { display: inline-block; margin-top: 6px; color: #e5c158; font-size: 12px; text-decoration: underline; font-weight: 600; }
     .entry-amount { text-align: right; }
     .entry-amount .val { font-size: 15px; font-weight: 700; }
     .entry-amount .val.plus { color: #52c41a; }
@@ -173,8 +183,8 @@
 
       <form id="entryForm" onsubmit="saveEntry(event)">
         <div class="form-group">
-          <label id="nameLabel">Donor / Supporter Name *</label>
-          <input type="text" id="donorName" required placeholder="e.g., Brother Ali">
+          <label id="nameLabel">Name *</label>
+          <input type="text" id="donorName" required placeholder="e.g., Ali">
         </div>
 
         <div class="form-group">
@@ -195,22 +205,12 @@
         </div>
 
         <div class="form-group">
-          <label>Handled / Received By</label>
-          <input type="text" id="handledBy" placeholder="e.g., Volunteer name">
-        </div>
-
-        <div class="form-group">
           <label>Note</label>
           <textarea id="noteText" rows="2" placeholder="Additional details..."></textarea>
         </div>
 
-        <div class="form-group">
-          <label>Attach Screenshot / Receipt (Optional)</label>
-          <input type="file" id="receiptImg" class="file-input" accept="image/*">
-        </div>
-
         <button type="submit" id="saveBtn" class="btn-gold">Save Entry to Cloud</button>
-        <div id="statusMsg" class="status-msg">Saving entry...</div>
+        <div id="statusMsg" class="status-msg">Saving entry instantly...</div>
       </form>
     </div>
 
@@ -294,21 +294,19 @@
     document.getElementById('lockScreen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
 
-    // 1. Instant loading from local cache (0-second screen render)
-    const cachedData = localStorage.getItem('cached_msm_entries');
-    if (cachedData) {
-      try {
-        allEntries = JSON.parse(cachedData);
+    try {
+      const cached = localStorage.getItem('cached_msm_entries_pure');
+      if (cached) {
+        allEntries = JSON.parse(cached);
         populateFridayFilter(allEntries);
         onFridayFilterChange();
         populateMonthFilter(allEntries);
         renderMonthlyReport();
-      } catch (err) {
-        console.warn("Cache parse error", err);
       }
+    } catch (e) {
+      console.warn(e);
     }
 
-    // 2. Background cloud synchronization
     fetchCloudEntries();
   }
 
@@ -317,7 +315,7 @@
     document.getElementById('tabCollection').className = 'tab-btn ' + (type === 'collection' ? 'active-collection' : '');
     document.getElementById('tabExpense').className = 'tab-btn ' + (type === 'expense' ? 'active-expense' : '');
     document.getElementById('saveBtn').innerText = type === 'collection' ? 'Save Collection to Cloud' : 'Save Expense to Cloud';
-    document.getElementById('nameLabel').innerText = type === 'collection' ? 'Donor / Supporter Name *' : 'Expense Title / Detail *';
+    document.getElementById('nameLabel').innerText = type === 'collection' ? 'Name *' : 'Expense Title / Detail *';
   }
 
   function setPayMode(mode) {
@@ -354,12 +352,11 @@
     return datePart;
   }
 
-  // Saturday to Friday Cycle
   function getFridayEventDate(dateStr) {
     const d = parseLocalDate(dateStr);
     if (!d || isNaN(d.getTime())) return '';
     
-    const day = d.getDay(); // 0: Sun, 1: Mon, ..., 5: Fri, 6: Sat
+    const day = d.getDay();
     const diffToFriday = (5 - day + 7) % 7;
     d.setDate(d.getDate() + diffToFriday);
     return getLocalDateStr(d);
@@ -548,7 +545,7 @@
       const data = await response.json();
       allEntries = data.reverse();
       
-      localStorage.setItem('cached_msm_entries', JSON.stringify(allEntries));
+      localStorage.setItem('cached_msm_entries_pure', JSON.stringify(allEntries));
 
       populateFridayFilter(allEntries);
       onFridayFilterChange();
@@ -562,35 +559,6 @@
     }
   }
 
-  function compressImage(file) {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          const maxDim = 1000;
-          let w = img.width;
-          let h = img.height;
-          if (w > h && w > maxDim) {
-            h = Math.round((h * maxDim) / w);
-            w = maxDim;
-          } else if (h > maxDim) {
-            w = Math.round((w * maxDim) / h);
-            h = maxDim;
-          }
-          const canvas = document.createElement('canvas');
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-          resolve(canvas.toDataURL('image/jpeg', 0.7));
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-
   async function saveEntry(e) {
     e.preventDefault();
     const saveBtn = document.getElementById('saveBtn');
@@ -598,17 +566,6 @@
 
     saveBtn.disabled = true;
     statusMsg.style.display = 'block';
-
-    const fileInput = document.getElementById('receiptImg');
-    let imageBase64 = null;
-    let fileName = null;
-    let mimeType = 'image/jpeg';
-
-    if (fileInput.files && fileInput.files[0]) {
-      const file = fileInput.files[0];
-      fileName = file.name.replace(/\.[^/.]+$/, "") + ".jpg";
-      imageBase64 = await compressImage(file);
-    }
 
     const newId = Date.now();
     const payload = {
@@ -619,14 +576,10 @@
       amount: parseFloat(document.getElementById('amount').value),
       date: document.getElementById('entryDate').value,
       mode: currentPayMode,
-      handledBy: document.getElementById('handledBy').value,
-      note: document.getElementById('noteText').value,
-      image: imageBase64,
-      filename: fileName,
-      mimeType: mimeType
+      note: document.getElementById('noteText').value
     };
 
-    allEntries.unshift({ ...payload, image: imageBase64 ? '📷 Uploading...' : '' });
+    allEntries.unshift(payload);
     populateFridayFilter(allEntries);
     onFridayFilterChange();
     renderMonthlyReport();
@@ -665,13 +618,6 @@
         if (item.type === 'collection') totalCol += amt;
         else totalExp += amt;
 
-        let imageHTML = '';
-        if (item.image && item.image.startsWith('http')) {
-          imageHTML = `<br><a href="${item.image}" target="_blank" class="receipt-link">📷 View Screenshot</a>`;
-        } else if (item.image === '📷 Uploading...') {
-          imageHTML = `<br><span style="color:#e5c158; font-size:11px;">Uploading attachment...</span>`;
-        }
-
         const neatDateTime = formatNeatDateTime(item.date, item.id);
 
         const card = document.createElement('div');
@@ -679,9 +625,8 @@
         card.innerHTML = `
           <div class="entry-info">
             <h4>${item.name}</h4>
-            <p>${neatDateTime} • ${item.mode} ${item.handledBy ? '• By: ' + item.handledBy : ''}</p>
+            <p>${neatDateTime} • ${item.mode}</p>
             <span class="entry-badge">${String(item.type).toUpperCase()}</span>
-            ${imageHTML}
           </div>
           <div class="entry-amount">
             <div class="val ${item.type === 'collection' ? 'plus' : 'minus'}">
