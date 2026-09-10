@@ -30,7 +30,7 @@
     .urdu-poetry { font-family: 'Amiri', serif; font-size: 24px; color: #e5c158; line-height: 1.5; }
     .card { background: #113326; border: 1px solid #1e4d3a; border-radius: 14px; padding: 16px; margin-bottom: 16px; }
     
-    /* Friday Filter */
+    /* Filter Styles */
     .filter-card { display: flex; align-items: center; gap: 10px; background: #113326; border: 1px solid #1e4d3a; border-radius: 14px; padding: 12px 16px; margin-bottom: 16px; }
     .filter-label { font-size: 13px; font-weight: 700; color: #e5c158; white-space: nowrap; }
     .filter-select { width: 100%; padding: 10px; background: #081d15; border: 1px solid #235843; border-radius: 8px; color: #fff; font-size: 13px; font-weight: 600; outline: none; cursor: pointer; }
@@ -43,8 +43,8 @@
     .sum-box.spent span { color: #ff4d4f; }
     .sum-box.balance span { color: #e5c158; }
 
-    /* Monthly Report Breakdown */
-    .person-list { margin-top: 12px; }
+    /* Person Breakdown */
+    .person-list { margin-top: 10px; }
     .person-item { background: #081d15; border: 1px solid #1b4535; border-radius: 8px; padding: 10px 12px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
     .person-name { font-size: 13px; font-weight: 600; color: #fff; }
     .person-amount { font-size: 13px; font-weight: 700; color: #52c41a; }
@@ -98,16 +98,17 @@
       <div class="urdu-poetry">اس راہ کے مسافر ہیں، اسی راہ میں ملیں گے</div>
     </div>
 
-    <!-- FRIDAY EVENT FILTER -->
+    <!-- FRIDAY/WEEK FILTER -->
     <div class="filter-card">
-      <label class="filter-label">📅 Event / Friday:</label>
+      <label class="filter-label">📅 Select Week / Friday:</label>
       <select id="fridayFilter" class="filter-select" onchange="onFridayFilterChange()">
         <option value="ALL">All Time / All Events</option>
       </select>
     </div>
 
-    <!-- FRIDAY SUMMARY -->
+    <!-- WEEKLY TOTALS -->
     <div class="card">
+      <div class="form-title" id="weekBudgetTitle">Weekly Budget Summary</div>
       <div class="summary-grid">
         <div class="sum-box collected">
           <label>Collected</label>
@@ -120,6 +121,14 @@
         <div class="sum-box balance">
           <label>Net Balance</label>
           <span id="sumBalance">Rs. 0</span>
+        </div>
+      </div>
+
+      <!-- THIS WEEK MEMBER BREAKDOWN -->
+      <div style="margin-top: 16px;">
+        <div style="font-size: 13px; font-weight: 700; color: #e5c158; margin-bottom: 6px;">👥 Members Collection This Week:</div>
+        <div id="weeklyPersonList" class="person-list">
+          <!-- Dynamic weekly member contributions -->
         </div>
       </div>
     </div>
@@ -175,15 +184,15 @@
       </form>
     </div>
 
-    <!-- DRIVE STREAM -->
+    <!-- FILTERED ENTRIES LIST -->
     <div class="card">
-      <div class="form-title">Drive Stream (Filtered Entries)</div>
+      <div class="form-title">Filtered Activity Stream</div>
       <div id="entriesList">Loading records...</div>
     </div>
 
     <!-- MONTHLY REPORT & PERSON BREAKDOWN -->
     <div class="card">
-      <div class="form-title">📊 Monthly Report & Persons Collected</div>
+      <div class="form-title">📊 Monthly Report & All Contributors</div>
       
       <div class="filter-card" style="margin-bottom: 12px; background: #081d15;">
         <label class="filter-label">Select Month:</label>
@@ -191,7 +200,6 @@
         </select>
       </div>
 
-      <!-- Monthly Summary Stats -->
       <div class="summary-grid" style="margin-bottom: 14px;">
         <div class="sum-box collected">
           <label>Month Total</label>
@@ -207,10 +215,8 @@
         </div>
       </div>
 
-      <!-- Person-Wise Total Collected List -->
-      <div style="font-size: 13px; font-weight: 700; color: #e5c158; margin-bottom: 6px;">Total Collected Per Person:</div>
+      <div style="font-size: 13px; font-weight: 700; color: #e5c158; margin-bottom: 6px;">Total Collected Per Person (Month):</div>
       <div id="personBreakdownList" class="person-list">
-        <!-- Dynamic person list will render here -->
       </div>
     </div>
 
@@ -225,7 +231,15 @@
   let currentPayMode = 'Online Transfer';
   let allEntries = [];
 
-  document.getElementById('entryDate').valueAsDate = new Date();
+  // Local ISO date format (YYYY-MM-DD)
+  function getLocalDateStr(d = new Date()) {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  document.getElementById('entryDate').value = getLocalDateStr();
 
   if (localStorage.getItem('isUnlocked') === 'true') {
     showDashboard();
@@ -269,23 +283,31 @@
     document.getElementById('modeCash').className = 'pay-mode-btn ' + (mode === 'Cash In Hand' ? 'active' : '');
   }
 
-  // Helper: Find Friday event date for any given date
-  function getFridayEventDate(dateStr) {
-    if (!dateStr) return '';
-    const d = new Date(dateStr + 'T00:00:00');
-    if (isNaN(d.getTime())) return '';
-    
-    const day = d.getDay(); // 0:Sun, 1:Mon, ..., 5:Fri, 6:Sat
-    const diffToFriday = (5 - day + 7) % 7;
-    d.setDate(d.getDate() + diffToFriday);
-    
-    return d.toISOString().split('T')[0];
+  // Parse YYYY-MM-DD safely into local Date
+  function parseLocalDate(dateStr) {
+    if (!dateStr) return null;
+    const parts = dateStr.split('T')[0].split('-');
+    if (parts.length < 3) return null;
+    return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
   }
 
-  // Populate Friday Filter Dropdown and DEFAULT to current Friday
+  // Calculate target Friday (cycle ends on Friday: Sat -> Next Fri)
+  function getFridayEventDate(dateStr) {
+    const d = parseLocalDate(dateStr);
+    if (!d || isNaN(d.getTime())) return '';
+    
+    const day = d.getDay(); // 0: Sun, 1: Mon, ..., 5: Fri, 6: Sat
+    // If today is Saturday (6), next Friday is in 6 days.
+    // If Sunday (0), next Friday is in 5 days.
+    // If Friday (5), it's today (0 days diff).
+    const diffToFriday = (5 - day + 7) % 7;
+    d.setDate(d.getDate() + diffToFriday);
+    return getLocalDateStr(d);
+  }
+
   function populateFridayFilter(entries) {
     const filterSelect = document.getElementById('fridayFilter');
-    const todayFri = getFridayEventDate(new Date().toISOString().split('T')[0]);
+    const todayFri = getFridayEventDate(getLocalDateStr(new Date()));
     const fridaySet = new Set();
 
     if (todayFri) fridaySet.add(todayFri);
@@ -299,43 +321,81 @@
     filterSelect.innerHTML = '<option value="ALL">All Time / All Events</option>';
 
     sortedFridays.forEach(friDate => {
-      const d = new Date(friDate + 'T00:00:00');
+      const d = parseLocalDate(friDate);
       const formatted = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-      
       const isThisFriday = (friDate === todayFri);
+      
       const opt = document.createElement('option');
       opt.value = friDate;
-      opt.innerText = (isThisFriday ? "⭐ THIS FRIDAY: " : "Friday: ") + formatted;
+      opt.innerText = (isThisFriday ? "⭐ THIS WEEK (Fri, " : "Week of: ") + formatted + (isThisFriday ? ")" : "");
       filterSelect.appendChild(opt);
     });
 
-    // Automatically set to THIS Friday as default!
+    // Default to this week's Friday
     filterSelect.value = todayFri;
   }
 
   function onFridayFilterChange() {
     const selectedFriday = document.getElementById('fridayFilter').value;
+    const titleEl = document.getElementById('weekBudgetTitle');
+    
+    let filtered;
     if (selectedFriday === 'ALL') {
-      renderEntries(allEntries);
+      filtered = allEntries;
+      titleEl.innerText = "Overall Budget Summary (All Time)";
     } else {
-      const filtered = allEntries.filter(item => getFridayEventDate(item.date) === selectedFriday);
-      renderEntries(filtered);
+      filtered = allEntries.filter(item => getFridayEventDate(item.date) === selectedFriday);
+      titleEl.innerText = "Budget Summary for Week ending " + selectedFriday;
+    }
+
+    renderEntries(filtered);
+    renderWeeklyBreakdown(filtered);
+  }
+
+  // Render weekly member collection list
+  function renderWeeklyBreakdown(entries) {
+    const container = document.getElementById('weeklyPersonList');
+    container.innerHTML = '';
+
+    const personTotals = {};
+    entries.forEach(item => {
+      if (item.type === 'collection') {
+        const amt = parseFloat(item.amount) || 0;
+        const name = (item.name || 'Anonymous').trim();
+        personTotals[name] = (personTotals[name] || 0) + amt;
+      }
+    });
+
+    const sortedPersons = Object.keys(personTotals)
+      .map(name => ({ name, amount: personTotals[name] }))
+      .sort((a, b) => b.amount - a.amount);
+
+    if (sortedPersons.length === 0) {
+      container.innerHTML = '<div style="text-align:center; color:#a3c2b5; font-size:12px; padding:6px;">No member collections for this period.</div>';
+    } else {
+      sortedPersons.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'person-item';
+        div.innerHTML = `
+          <span class="person-name">👤 ${p.name}</span>
+          <span class="person-amount">Rs. ${p.amount.toLocaleString()}</span>
+        `;
+        container.appendChild(div);
+      });
     }
   }
 
-  // Populate Month Filter Dropdown
   function populateMonthFilter(entries) {
     const monthSelect = document.getElementById('monthFilter');
     const monthsSet = new Set();
     
-    // Add current month by default
     const now = new Date();
     const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     monthsSet.add(currentMonthKey);
 
     entries.forEach(item => {
       if (item.date && item.date.length >= 7) {
-        monthsSet.add(item.date.substring(0, 7)); // YYYY-MM
+        monthsSet.add(item.date.substring(0, 7));
       }
     });
 
@@ -344,7 +404,7 @@
 
     sortedMonths.forEach(mKey => {
       const [year, month] = mKey.split('-');
-      const dateObj = new Date(year, month - 1, 1);
+      const dateObj = new Date(parseInt(year), parseInt(month) - 1, 1);
       const monthLabel = dateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
       
       const opt = document.createElement('option');
@@ -356,7 +416,6 @@
     monthSelect.value = currentMonthKey;
   }
 
-  // Calculate and display Monthly Report and Per-Person Collection Breakdown
   function renderMonthlyReport() {
     const monthKey = document.getElementById('monthFilter').value;
     if (!monthKey) return;
@@ -371,8 +430,6 @@
       const amt = parseFloat(item.amount) || 0;
       if (item.type === 'collection') {
         mCol += amt;
-        
-        // Sum total collected per person/donor
         const pName = (item.name || 'Anonymous').trim();
         personTotals[pName] = (personTotals[pName] || 0) + amt;
       } else {
@@ -380,12 +437,10 @@
       }
     });
 
-    // Update monthly summary numbers
     document.getElementById('mSumCollected').innerText = `Rs. ${mCol.toLocaleString()}`;
     document.getElementById('mSumSpent').innerText = `Rs. ${mExp.toLocaleString()}`;
     document.getElementById('mSumBalance').innerText = `Rs. ${(mCol - mExp).toLocaleString()}`;
 
-    // Render Person Collection List sorted highest to lowest
     const personContainer = document.getElementById('personBreakdownList');
     personContainer.innerHTML = '';
 
@@ -417,12 +472,11 @@
       const data = await response.json();
       allEntries = data.reverse();
       
-      // Setup filters and views
       populateFridayFilter(allEntries);
-      onFridayFilterChange(); // Automatically renders "This Friday" entries
+      onFridayFilterChange();
       
       populateMonthFilter(allEntries);
-      renderMonthlyReport(); // Renders current month breakdown
+      renderMonthlyReport();
     } catch(err) {
       container.innerHTML = '<div style="text-align:center; color:#ff4d4f; padding:12px;">Failed to load data. Check internet connection.</div>';
     }
@@ -474,7 +528,7 @@
       });
 
       document.getElementById('entryForm').reset();
-      document.getElementById('entryDate').valueAsDate = new Date();
+      document.getElementById('entryDate').value = getLocalDateStr();
       statusMsg.style.display = 'none';
       saveBtn.disabled = false;
       
