@@ -100,15 +100,15 @@
 
     <!-- FRIDAY/WEEK FILTER -->
     <div class="filter-card">
-      <label class="filter-label">📅 Select Week / Friday:</label>
+      <label class="filter-label">📅 Select Friday:</label>
       <select id="fridayFilter" class="filter-select" onchange="onFridayFilterChange()">
         <option value="ALL">All Time / All Events</option>
       </select>
     </div>
 
-    <!-- WEEKLY TOTALS -->
+    <!-- WEEKLY BUDGET SUMMARY -->
     <div class="card">
-      <div class="form-title" id="weekBudgetTitle">Weekly Budget Summary</div>
+      <div class="form-title" id="weekBudgetTitle">Budget Summary</div>
       <div class="summary-grid">
         <div class="sum-box collected">
           <label>Collected</label>
@@ -128,7 +128,6 @@
       <div style="margin-top: 16px;">
         <div style="font-size: 13px; font-weight: 700; color: #e5c158; margin-bottom: 6px;">👥 Members Collection This Week:</div>
         <div id="weeklyPersonList" class="person-list">
-          <!-- Dynamic weekly member contributions -->
         </div>
       </div>
     </div>
@@ -143,7 +142,7 @@
 
       <form id="entryForm" onsubmit="saveEntry(event)">
         <div class="form-group">
-          <label id="nameLabel">Name *</label>
+          <label id="nameLabel">Donor / Supporter Name *</label>
           <input type="text" id="donorName" required placeholder="e.g., Brother Ali">
         </div>
 
@@ -165,6 +164,11 @@
         </div>
 
         <div class="form-group">
+          <label>Handled / Received By</label>
+          <input type="text" id="handledBy" placeholder="e.g., Volunteer name">
+        </div>
+
+        <div class="form-group">
           <label>Note</label>
           <textarea id="noteText" rows="2" placeholder="Additional details..."></textarea>
         </div>
@@ -179,9 +183,9 @@
       </form>
     </div>
 
-    <!-- FILTERED ENTRIES LIST -->
+    <!-- ACTIVITY STREAM -->
     <div class="card">
-      <div class="form-title">Filtered Activity Stream</div>
+      <div class="form-title">Activity Stream</div>
       <div id="entriesList">Loading records...</div>
     </div>
 
@@ -226,7 +230,6 @@
   let currentPayMode = 'Online Transfer';
   let allEntries = [];
 
-  // Local ISO date format (YYYY-MM-DD)
   function getLocalDateStr(d = new Date()) {
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -278,7 +281,6 @@
     document.getElementById('modeCash').className = 'pay-mode-btn ' + (mode === 'Cash In Hand' ? 'active' : '');
   }
 
-  // Parse YYYY-MM-DD safely into local Date
   function parseLocalDate(dateStr) {
     if (!dateStr) return null;
     const parts = dateStr.split('T')[0].split('-');
@@ -286,18 +288,30 @@
     return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
   }
 
-  // Calculate target Friday (cycle ends on Friday: Sat -> Next Fri)
+  // Saturday to Friday cycle: Friday tak usi din, Saturday hoty hi agla Friday
   function getFridayEventDate(dateStr) {
     const d = parseLocalDate(dateStr);
     if (!d || isNaN(d.getTime())) return '';
     
     const day = d.getDay(); // 0: Sun, 1: Mon, ..., 5: Fri, 6: Sat
-    // If today is Saturday (6), next Friday is in 6 days.
-    // If Sunday (0), next Friday is in 5 days.
-    // If Friday (5), it's today (0 days diff).
     const diffToFriday = (5 - day + 7) % 7;
     d.setDate(d.getDate() + diffToFriday);
     return getLocalDateStr(d);
+  }
+
+  // Calculate 1st, 2nd, 3rd, 4th, ya 5th Friday
+  function getFridayOrdinalLabel(friDateStr) {
+    const d = parseLocalDate(friDateStr);
+    if (!d) return friDateStr;
+
+    const dayOfMonth = d.getDate();
+    const fridayIndex = Math.ceil(dayOfMonth / 7);
+
+    const ordinals = ["1st", "2nd", "3rd", "4th", "5th"];
+    const ordText = ordinals[fridayIndex - 1] || `${fridayIndex}th`;
+    const monthName = d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+
+    return `${ordText} Friday (${monthName})`;
   }
 
   function populateFridayFilter(entries) {
@@ -316,17 +330,15 @@
     filterSelect.innerHTML = '<option value="ALL">All Time / All Events</option>';
 
     sortedFridays.forEach(friDate => {
-      const d = parseLocalDate(friDate);
-      const formatted = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+      const label = getFridayOrdinalLabel(friDate);
       const isThisFriday = (friDate === todayFri);
       
       const opt = document.createElement('option');
       opt.value = friDate;
-      opt.innerText = (isThisFriday ? "⭐ THIS WEEK (Fri, " : "Week of: ") + formatted + (isThisFriday ? ")" : "");
+      opt.innerText = (isThisFriday ? "⭐ THIS WEEK: " : "") + label;
       filterSelect.appendChild(opt);
     });
 
-    // Default to this week's Friday
     filterSelect.value = todayFri;
   }
 
@@ -337,17 +349,17 @@
     let filtered;
     if (selectedFriday === 'ALL') {
       filtered = allEntries;
-      titleEl.innerText = "Overall Budget Summary (All Time)";
+      titleEl.innerText = "Budget Summary (All Time)";
     } else {
       filtered = allEntries.filter(item => getFridayEventDate(item.date) === selectedFriday);
-      titleEl.innerText = "Budget Summary for Week ending " + selectedFriday;
+      const friLabel = getFridayOrdinalLabel(selectedFriday);
+      titleEl.innerText = `Budget Summary for ${friLabel}`;
     }
 
     renderEntries(filtered);
     renderWeeklyBreakdown(filtered);
   }
 
-  // Render weekly member collection list
   function renderWeeklyBreakdown(entries) {
     const container = document.getElementById('weeklyPersonList');
     container.innerHTML = '';
