@@ -288,7 +288,7 @@
     return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
   }
 
-  // Saturday to Friday cycle: Friday tak usi din, Saturday hoty hi agla Friday
+  // Saturday se start aur Friday tak ka cycle
   function getFridayEventDate(dateStr) {
     const d = parseLocalDate(dateStr);
     if (!d || isNaN(d.getTime())) return '';
@@ -299,7 +299,7 @@
     return getLocalDateStr(d);
   }
 
-  // Calculate 1st, 2nd, 3rd, 4th, ya 5th Friday
+  // 1st, 2nd, 3rd, 4th, ya 5th Friday calculate karna
   function getFridayOrdinalLabel(friDateStr) {
     const d = parseLocalDate(friDateStr);
     if (!d) return friDateStr;
