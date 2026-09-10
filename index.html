@@ -4,16 +4,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Mekhlooq Se Muhabbat - Cloud Ledger</title>
+
+  <!-- Browser Tab Icon (Favicon) & Mobile Home Icon -->
+  <link rel="icon" type="image/jpeg" href="./logo.jpg">
+  <link rel="apple-touch-icon" href="./logo.jpg">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background-color: #0b251c; color: #eaf2ef; padding: 16px; min-height: 100vh; display: flex; justify-content: center; }
     .app-container { width: 100%; max-width: 480px; margin: 0 auto; }
     
+    /* Branding Logo Styling */
+    .app-logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 2px solid #e5c158;
+      object-fit: cover;
+      box-shadow: 0 4px 15px rgba(229, 193, 88, 0.25);
+      margin: 0 auto 12px auto;
+      display: block;
+      background: #000;
+    }
+    .header-logo {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 2px solid #e5c158;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(229, 193, 88, 0.2);
+      margin: 0 auto 8px auto;
+      display: block;
+      background: #000;
+    }
+
     /* Lock Screen */
-    .lock-screen { background: #113326; border: 1px solid #1e4d3a; border-radius: 16px; padding: 32px 20px; text-align: center; margin-top: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    .lock-screen { background: #113326; border: 1px solid #1e4d3a; border-radius: 16px; padding: 28px 20px; text-align: center; margin-top: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
     .lock-screen h1 { color: #e5c158; font-size: 20px; letter-spacing: 1px; margin-bottom: 6px; text-transform: uppercase; }
     .lock-screen p { color: #a3c2b5; font-size: 13px; margin-bottom: 24px; }
     .input-wrapper { position: relative; margin-bottom: 16px; }
@@ -66,7 +96,7 @@
 
     .entry-card { background: #081d15; border: 1px solid #1b4535; border-radius: 10px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
     .entry-info h4 { font-size: 14px; color: #fff; margin-bottom: 2px; }
-    .entry-info p { font-size: 11px; color: #a3c2b5; }
+    .entry-info p { font-size: 11px; color: #a3c2b5; line-height: 1.4; }
     .entry-badge { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-top: 4px; background: #e5c158; color: #0b251c; }
     .receipt-link { display: inline-block; margin-top: 6px; color: #e5c158; font-size: 12px; text-decoration: underline; font-weight: 600; }
     .entry-amount { text-align: right; }
@@ -82,6 +112,7 @@
   
   <!-- LOCK SCREEN -->
   <div id="lockScreen" class="lock-screen">
+    <img src="./logo.jpg" alt="Logo" class="app-logo" onerror="this.style.display='none'">
     <h1>Mekhlooq Se Muhabbat</h1>
     <p>Enter passcode to access cloud ledger</p>
     <div class="input-wrapper">
@@ -95,6 +126,7 @@
   <!-- DASHBOARD -->
   <div id="dashboard" class="dashboard">
     <div class="header-banner">
+      <img src="./logo.jpg" alt="Logo" class="header-logo" onerror="this.style.display='none'">
       <div class="urdu-poetry">اس راہ کے مسافر ہیں، اسی راہ میں ملیں گے</div>
     </div>
 
@@ -127,8 +159,7 @@
       <!-- THIS WEEK MEMBER BREAKDOWN -->
       <div style="margin-top: 16px;">
         <div style="font-size: 13px; font-weight: 700; color: #e5c158; margin-bottom: 6px;">👥 Members Collection This Week:</div>
-        <div id="weeklyPersonList" class="person-list">
-        </div>
+        <div id="weeklyPersonList" class="person-list"></div>
       </div>
     </div>
 
@@ -142,7 +173,7 @@
 
       <form id="entryForm" onsubmit="saveEntry(event)">
         <div class="form-group">
-          <label id="nameLabel">Name *</label>
+          <label id="nameLabel">Donor / Supporter Name *</label>
           <input type="text" id="donorName" required placeholder="e.g., Brother Ali">
         </div>
 
@@ -164,6 +195,11 @@
         </div>
 
         <div class="form-group">
+          <label>Handled / Received By</label>
+          <input type="text" id="handledBy" placeholder="e.g., Volunteer name">
+        </div>
+
+        <div class="form-group">
           <label>Note</label>
           <textarea id="noteText" rows="2" placeholder="Additional details..."></textarea>
         </div>
@@ -174,7 +210,7 @@
         </div>
 
         <button type="submit" id="saveBtn" class="btn-gold">Save Entry to Cloud</button>
-        <div id="statusMsg" class="status-msg">Saving entry & uploading image to Drive...</div>
+        <div id="statusMsg" class="status-msg">Saving entry...</div>
       </form>
     </div>
 
@@ -190,8 +226,7 @@
       
       <div class="filter-card" style="margin-bottom: 12px; background: #081d15;">
         <label class="filter-label">Select Month:</label>
-        <select id="monthFilter" class="filter-select" onchange="renderMonthlyReport()">
-        </select>
+        <select id="monthFilter" class="filter-select" onchange="renderMonthlyReport()"></select>
       </div>
 
       <div class="summary-grid" style="margin-bottom: 14px;">
@@ -210,8 +245,7 @@
       </div>
 
       <div style="font-size: 13px; font-weight: 700; color: #e5c158; margin-bottom: 6px;">Total Collected Per Person (Month):</div>
-      <div id="personBreakdownList" class="person-list">
-      </div>
+      <div id="personBreakdownList" class="person-list"></div>
     </div>
 
   </div>
@@ -259,6 +293,22 @@
   function showDashboard() {
     document.getElementById('lockScreen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
+
+    // 1. Instant rendering from browser cache (0-second load time)
+    const cachedData = localStorage.getItem('cached_msm_entries');
+    if (cachedData) {
+      try {
+        allEntries = JSON.parse(cachedData);
+        populateFridayFilter(allEntries);
+        onFridayFilterChange();
+        populateMonthFilter(allEntries);
+        renderMonthlyReport();
+      } catch (err) {
+        console.warn("Cache parse error", err);
+      }
+    }
+
+    // 2. Fetch fresh updates from Google Sheets in background
     fetchCloudEntries();
   }
 
@@ -278,12 +328,33 @@
 
   function parseLocalDate(dateStr) {
     if (!dateStr) return null;
-    const parts = dateStr.split('T')[0].split('-');
+    const parts = String(dateStr).split('T')[0].split('-');
     if (parts.length < 3) return null;
     return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
   }
 
-  // Saturday se start aur Friday tak ka cycle
+  function formatNeatDateTime(rawDate, rawId) {
+    const d = new Date(rawDate);
+    if (!isNaN(d.getTime()) && String(rawDate).includes('T')) {
+      const datePart = d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+      const timePart = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+      return `${datePart} • ${timePart}`;
+    }
+
+    const parsedD = parseLocalDate(rawDate);
+    const datePart = parsedD ? parsedD.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : rawDate;
+    
+    if (rawId && !isNaN(Number(rawId))) {
+      const idDate = new Date(Number(rawId));
+      if (!isNaN(idDate.getTime())) {
+        const timePart = idDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        return `${datePart} • ${timePart}`;
+      }
+    }
+    return datePart;
+  }
+
+  // Saturday to Friday Cycle
   function getFridayEventDate(dateStr) {
     const d = parseLocalDate(dateStr);
     if (!d || isNaN(d.getTime())) return '';
@@ -294,7 +365,6 @@
     return getLocalDateStr(d);
   }
 
-  // 1st, 2nd, 3rd, 4th, ya 5th Friday calculate karna
   function getFridayOrdinalLabel(friDateStr) {
     const d = parseLocalDate(friDateStr);
     if (!d) return friDateStr;
@@ -311,6 +381,7 @@
 
   function populateFridayFilter(entries) {
     const filterSelect = document.getElementById('fridayFilter');
+    const currentVal = filterSelect.value;
     const todayFri = getFridayEventDate(getLocalDateStr(new Date()));
     const fridaySet = new Set();
 
@@ -334,7 +405,7 @@
       filterSelect.appendChild(opt);
     });
 
-    filterSelect.value = todayFri;
+    filterSelect.value = (currentVal && currentVal !== 'ALL') ? currentVal : todayFri;
   }
 
   function onFridayFilterChange() {
@@ -389,6 +460,7 @@
 
   function populateMonthFilter(entries) {
     const monthSelect = document.getElementById('monthFilter');
+    const currentVal = monthSelect.value;
     const monthsSet = new Set();
     
     const now = new Date();
@@ -396,8 +468,8 @@
     monthsSet.add(currentMonthKey);
 
     entries.forEach(item => {
-      if (item.date && item.date.length >= 7) {
-        monthsSet.add(item.date.substring(0, 7));
+      if (item.date && String(item.date).length >= 7) {
+        monthsSet.add(String(item.date).substring(0, 7));
       }
     });
 
@@ -415,14 +487,14 @@
       monthSelect.appendChild(opt);
     });
 
-    monthSelect.value = currentMonthKey;
+    monthSelect.value = currentVal || currentMonthKey;
   }
 
   function renderMonthlyReport() {
     const monthKey = document.getElementById('monthFilter').value;
     if (!monthKey) return;
 
-    const monthEntries = allEntries.filter(item => item.date && item.date.startsWith(monthKey));
+    const monthEntries = allEntries.filter(item => item.date && String(item.date).startsWith(monthKey));
 
     let mCol = 0;
     let mExp = 0;
@@ -467,21 +539,58 @@
 
   async function fetchCloudEntries() {
     const container = document.getElementById('entriesList');
-    container.innerHTML = '<div style="text-align:center; color:#e5c158; padding:12px;">Syncing with Cloud...</div>';
+    if (allEntries.length === 0) {
+      container.innerHTML = '<div style="text-align:center; color:#e5c158; padding:12px;">Syncing with Cloud...</div>';
+    }
 
     try {
       const response = await fetch(CLOUD_SCRIPT_URL + "?t=" + Date.now());
       const data = await response.json();
       allEntries = data.reverse();
       
+      // Save in browser storage for instant reload next time
+      localStorage.setItem('cached_msm_entries', JSON.stringify(allEntries));
+
       populateFridayFilter(allEntries);
       onFridayFilterChange();
       
       populateMonthFilter(allEntries);
       renderMonthlyReport();
     } catch(err) {
-      container.innerHTML = '<div style="text-align:center; color:#ff4d4f; padding:12px;">Failed to load data. Check internet connection.</div>';
+      if (allEntries.length === 0) {
+        container.innerHTML = '<div style="text-align:center; color:#ff4d4f; padding:12px;">Failed to load data. Check internet connection.</div>';
+      }
     }
+  }
+
+  // Fast Browser-Side Image Resizer
+  function compressImage(file) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 1000;
+          let w = img.width;
+          let h = img.height;
+          if (w > h && w > maxDim) {
+            h = Math.round((h * maxDim) / w);
+            w = maxDim;
+          } else if (h > maxDim) {
+            w = Math.round((w * maxDim) / h);
+            h = maxDim;
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', 0.7));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
   }
 
   async function saveEntry(e) {
@@ -495,22 +604,18 @@
     const fileInput = document.getElementById('receiptImg');
     let imageBase64 = null;
     let fileName = null;
-    let mimeType = null;
+    let mimeType = 'image/jpeg';
 
     if (fileInput.files && fileInput.files[0]) {
       const file = fileInput.files[0];
-      fileName = file.name;
-      mimeType = file.type;
-      imageBase64 = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.readAsDataURL(file);
-      });
+      fileName = file.name.replace(/\.[^/.]+$/, "") + ".jpg";
+      imageBase64 = await compressImage(file);
     }
 
+    const newId = Date.now();
     const payload = {
       action: "add",
-      id: Date.now(),
+      id: newId,
       type: currentType,
       name: document.getElementById('donorName').value,
       amount: parseFloat(document.getElementById('amount').value),
@@ -523,6 +628,12 @@
       mimeType: mimeType
     };
 
+    // Optimistic Update: Add to screen immediately without waiting for server response
+    allEntries.unshift({ ...payload, image: imageBase64 ? '📷 Uploading...' : '' });
+    populateFridayFilter(allEntries);
+    onFridayFilterChange();
+    renderMonthlyReport();
+
     try {
       await fetch(CLOUD_SCRIPT_URL, {
         method: "POST",
@@ -534,7 +645,8 @@
       statusMsg.style.display = 'none';
       saveBtn.disabled = false;
       
-      setTimeout(fetchCloudEntries, 1500);
+      // Background re-sync to get official Drive link
+      fetchCloudEntries();
     } catch(err) {
       alert("Error saving data. Please try again.");
       statusMsg.style.display = 'none';
@@ -560,14 +672,18 @@
         let imageHTML = '';
         if (item.image && item.image.startsWith('http')) {
           imageHTML = `<br><a href="${item.image}" target="_blank" class="receipt-link">📷 View Screenshot</a>`;
+        } else if (item.image === '📷 Uploading...') {
+          imageHTML = `<br><span style="color:#e5c158; font-size:11px;">Uploading attachment...</span>`;
         }
+
+        const neatDateTime = formatNeatDateTime(item.date, item.id);
 
         const card = document.createElement('div');
         card.className = 'entry-card';
         card.innerHTML = `
           <div class="entry-info">
             <h4>${item.name}</h4>
-            <p>${item.date} • ${item.mode} ${item.handledBy ? '• By: ' + item.handledBy : ''}</p>
+            <p>${neatDateTime} • ${item.mode} ${item.handledBy ? '• By: ' + item.handledBy : ''}</p>
             <span class="entry-badge">${String(item.type).toUpperCase()}</span>
             ${imageHTML}
           </div>
