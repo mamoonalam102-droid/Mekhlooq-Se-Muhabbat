@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Mekhlooq Se Muhabbat - Cloud Ledger</title>
 
-  <!-- Browser Tab Icon (Favicon) & Mobile Home Icon -->
-  <link rel="icon" type="image/jpeg" href="./logo.jpg">
-  <link rel="apple-touch-icon" href="./logo.jpg">
+  <!-- Browser Tab Icon & Mobile Home Icon -->
+  <link rel="icon" type="image/jpeg" href="./logo.jpeg">
+  <link rel="apple-touch-icon" href="./logo.jpeg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,8 +20,8 @@
     
     /* Branding Logo Styling */
     .app-logo {
-      width: 72px;
-      height: 72px;
+      width: 76px;
+      height: 76px;
       border-radius: 50%;
       border: 2px solid #e5c158;
       object-fit: cover;
@@ -31,8 +31,8 @@
       background: #000;
     }
     .header-logo {
-      width: 58px;
-      height: 58px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       border: 2px solid #e5c158;
       object-fit: cover;
@@ -112,7 +112,7 @@
   
   <!-- LOCK SCREEN -->
   <div id="lockScreen" class="lock-screen">
-    <img src="./logo.jpg" alt="Logo" class="app-logo" onerror="this.style.display='none'">
+    <img src="./logo.jpeg" alt="Logo" class="app-logo" onerror="this.style.display='none'">
     <h1>Mekhlooq Se Muhabbat</h1>
     <p>Enter passcode to access cloud ledger</p>
     <div class="input-wrapper">
@@ -126,7 +126,7 @@
   <!-- DASHBOARD -->
   <div id="dashboard" class="dashboard">
     <div class="header-banner">
-      <img src="./logo.jpg" alt="Logo" class="header-logo" onerror="this.style.display='none'">
+      <img src="./logo.jpeg" alt="Logo" class="header-logo" onerror="this.style.display='none'">
       <div class="urdu-poetry">اس راہ کے مسافر ہیں، اسی راہ میں ملیں گے</div>
     </div>
 
@@ -294,7 +294,7 @@
     document.getElementById('lockScreen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
 
-    // 1. Instant rendering from browser cache (0-second load time)
+    // 1. Instant loading from local cache (0-second screen render)
     const cachedData = localStorage.getItem('cached_msm_entries');
     if (cachedData) {
       try {
@@ -308,7 +308,7 @@
       }
     }
 
-    // 2. Fetch fresh updates from Google Sheets in background
+    // 2. Background cloud synchronization
     fetchCloudEntries();
   }
 
@@ -548,7 +548,6 @@
       const data = await response.json();
       allEntries = data.reverse();
       
-      // Save in browser storage for instant reload next time
       localStorage.setItem('cached_msm_entries', JSON.stringify(allEntries));
 
       populateFridayFilter(allEntries);
@@ -563,7 +562,6 @@
     }
   }
 
-  // Fast Browser-Side Image Resizer
   function compressImage(file) {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -628,7 +626,6 @@
       mimeType: mimeType
     };
 
-    // Optimistic Update: Add to screen immediately without waiting for server response
     allEntries.unshift({ ...payload, image: imageBase64 ? '📷 Uploading...' : '' });
     populateFridayFilter(allEntries);
     onFridayFilterChange();
@@ -645,7 +642,6 @@
       statusMsg.style.display = 'none';
       saveBtn.disabled = false;
       
-      // Background re-sync to get official Drive link
       fetchCloudEntries();
     } catch(err) {
       alert("Error saving data. Please try again.");
